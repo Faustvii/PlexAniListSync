@@ -41,7 +41,8 @@ public class WebhookController : ControllerBase
         return result ? Ok() : BadRequest("Could not find Anilist show");
     }
 
-    [HttpGet(Name = "Config")]
+    [HttpGet]
+    [Route("Config")]
     public IActionResult GetConfig()
     {
         return Ok(new { Plex = _options.Value, Ani = _aniOptions.Value });

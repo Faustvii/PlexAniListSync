@@ -31,8 +31,6 @@ namespace PlexAniListSync.Services.Parsers
 
         private static EpisodeRule ParseRule(string ruleSection)
         {
-            //41380|43367|116242:13-24
-            //6682|4662|6682:13
             var sections = ruleSection.Split(':');
             if (sections.Length != 2)
                 throw new ArgumentException($"Could not parse sections from '{ruleSection}'");
@@ -51,9 +49,6 @@ namespace PlexAniListSync.Services.Parsers
                 if (rangeSection.Length != 2)
                     throw new ArgumentException($"Could not parse episode range from '{rangeSection}'");
 
-                if (!int.TryParse(rangeSection[0], out var _) || !int.TryParse(rangeSection[1], out var _))
-                    Console.WriteLine($"TRIED TO PARSE {rangeSection[0]} {rangeSection[1]} to int!");
-
                 _ = int.TryParse(rangeSection[0], out var startRange);
                 var endRangeParsed = int.TryParse(rangeSection[1], out var endRange);
 
@@ -63,9 +58,8 @@ namespace PlexAniListSync.Services.Parsers
             }
             else
             {
-                if (!int.TryParse(episodeRangeSection, out var _))
-                    Console.WriteLine($"TRIED TO PARSE {episodeRangeSection} to int!");
-                episodeRange = new[] { int.Parse(episodeRangeSection) };
+                _ = int.TryParse(episodeRangeSection, out var episode);
+                episodeRange = new[] { episode };
             }
 
             return new EpisodeRule(myAnimeListId, kitsuId, anilistId, episodeRange);
