@@ -1,0 +1,30 @@
+name: Build
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    name: Dotnet Side by Side testing sample
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: |
+            6.0.x
+      - run: dotnet build ./src/PlexAniListSync.API/
+      - run: dotnet test ./test/PlexAniListSync.UnitTests/
+  build-and-publish-latest:
+    needs: build-and-test # Only if build and test passed
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' # Running this job only for main branch
+
+    steps:
+    - uses: actions/checkout@v2 # Checking out the repo
+
+    - name: Build and Publish latest Docker image
+      uses: VaultVulp/gp-docker-action@1.2.0
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }} # Provide GITHUB_TOKEN to login into the GitHub Packages
+        image-name: PlexAniListSync # Provide only Docker image name, tag will be automatically set to latest
+        dockerfile: Dockerfile
