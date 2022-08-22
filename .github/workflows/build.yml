@@ -1,5 +1,17 @@
 name: Build
-on: [push, pull_request]
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'test/**'
+      - '.github/**'
+      - 'Dockerfile'
+  push:
+    paths:
+      - 'src/**'
+      - 'test/**'
+      - '.github/**'
+      - 'Dockerfile'
 
 permissions:
   contents: read
