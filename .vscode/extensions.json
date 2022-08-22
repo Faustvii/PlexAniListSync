@@ -4,10 +4,11 @@
 
 	// List of extensions which should be recommended for users of this workspace.
 	"recommendations": [
-    "ms-dotnettools.csharp",
-    "kreativ-software.csharpextensions",
-    "EditorConfig.EditorConfig"
-  ],
+		"ms-dotnettools.csharp",
+		"kreativ-software.csharpextensions",
+		"editorconfig.editorconfig",
+		"exiasr.hadolint"
+	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
 	"unwantedRecommendations": [
 
