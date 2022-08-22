@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0B4813D7-C1FC-4426-962D-C18DAD46F5F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlexAniListSync.API", "src\PlexAniListSync.API\PlexAniListSync.API.csproj", "{7F84919A-D5F7-4C41-989E-4A1A6C7565C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlexAniListSync.Models", "src\PlexAniListSync.Models\PlexAniListSync.Models.csproj", "{5219E83C-D6D6-4F51-A1C4-3790B485DA2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlexAniListSync.Services", "src\PlexAniListSync.Services\PlexAniListSync.Services.csproj", "{C2C0F9EA-B525-46E9-A771-574A7CAD7A5F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C998EEC9-6590-47A9-A9DE-56A439308ADC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlexAniListSync.UnitTests", "test\PlexAniListSync.UnitTests\PlexAniListSync.UnitTests.csproj", "{C3254E90-CF51-4F15-9DB4-F682F32B7CB6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7F84919A-D5F7-4C41-989E-4A1A6C7565C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F84919A-D5F7-4C41-989E-4A1A6C7565C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F84919A-D5F7-4C41-989E-4A1A6C7565C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F84919A-D5F7-4C41-989E-4A1A6C7565C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5219E83C-D6D6-4F51-A1C4-3790B485DA2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5219E83C-D6D6-4F51-A1C4-3790B485DA2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5219E83C-D6D6-4F51-A1C4-3790B485DA2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5219E83C-D6D6-4F51-A1C4-3790B485DA2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2C0F9EA-B525-46E9-A771-574A7CAD7A5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2C0F9EA-B525-46E9-A771-574A7CAD7A5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2C0F9EA-B525-46E9-A771-574A7CAD7A5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2C0F9EA-B525-46E9-A771-574A7CAD7A5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3254E90-CF51-4F15-9DB4-F682F32B7CB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3254E90-CF51-4F15-9DB4-F682F32B7CB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3254E90-CF51-4F15-9DB4-F682F32B7CB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3254E90-CF51-4F15-9DB4-F682F32B7CB6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7F84919A-D5F7-4C41-989E-4A1A6C7565C2} = {0B4813D7-C1FC-4426-962D-C18DAD46F5F3}
+		{5219E83C-D6D6-4F51-A1C4-3790B485DA2B} = {0B4813D7-C1FC-4426-962D-C18DAD46F5F3}
+		{C2C0F9EA-B525-46E9-A771-574A7CAD7A5F} = {0B4813D7-C1FC-4426-962D-C18DAD46F5F3}
+		{C3254E90-CF51-4F15-9DB4-F682F32B7CB6} = {C998EEC9-6590-47A9-A9DE-56A439308ADC}
+	EndGlobalSection
+EndGlobal
