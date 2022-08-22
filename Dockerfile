@@ -1,14 +1,20 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine3.16-amd64 AS build-env
 WORKDIR /app
-EXPOSE 80
+EXPOSE 80/tcp
 
-# copy csproj and restore as distinct layers
+# copy sln file
+COPY *.sln ./
 
-COPY /src/PlexAniListSync.API/*.*.csproj ./src/PlexAniListSync.API/
-COPY /src/PlexAniListSync.Models/*.*.csproj ./src/PlexAniListSync.Models/
-COPY /src/PlexAniListSync.Services/*.*.csproj ./src/PlexAniListSync.Services/
+# Copy the main source project files
+COPY src/*/*.csproj ./
+RUN for file in *.csproj; do mkdir -p src/"${file%.*}"/ && mv "$file" src/"${file%.*}"/; done
 
-RUN dotnet restore ./src/PlexAniListSync.API/
+# Copy the test project files
+COPY test/*/*.csproj ./
+RUN for file in *.csproj; do mkdir -p test/"${file%.*}"/ && mv "$file" test/"${file%.*}"/; done
+
+# restore nuget packages
+RUN dotnet restore
 
 # copy everything else and build app
 COPY ./src/ ./src
