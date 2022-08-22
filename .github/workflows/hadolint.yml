@@ -17,7 +17,6 @@ on:
 
 permissions:
   contents: read
-  security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
 
 jobs:
   hadolint:
