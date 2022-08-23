@@ -11,9 +11,15 @@ name: Hadolint
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - ".github/workflows/hadolint.yml"
+      - "Dockerfile"
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ "main" ]
+    paths:
+      - ".github/workflows/hadolint.yml"
+      - "Dockerfile"
 
 permissions:
   contents: read
