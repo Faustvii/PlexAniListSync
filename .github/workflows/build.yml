@@ -14,8 +14,10 @@ on:
       - 'Dockerfile'
 
 permissions:
-  contents: write
-  packages: write
+  contents: write # to be able to publish a GitHub release
+  packages: write # to be able to publish a package
+  pull-requests: write # to be able to comment on released pull requests
+  issues: write # to be able to comment on released issues
 
 jobs:
   build-and-test:
