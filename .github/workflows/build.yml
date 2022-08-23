@@ -20,7 +20,7 @@ permissions:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    name: Dotnet Side by Side testing sample
+    name: .NET build and test
     steps:
       - uses: actions/checkout@v3
       - name: Setup dotnet
