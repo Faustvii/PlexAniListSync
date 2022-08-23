@@ -57,7 +57,7 @@ jobs:
         id: semantic
         uses: cycjimmy/semantic-release-action@v3
         with:
-          semantic-semantic_version: 19.0.5
+          semantic_version: 19.0.5
           dry_run: true
           working_directory: .github/fetch_version
 
@@ -101,7 +101,7 @@ jobs:
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v3
         with:
-          semantic-semantic_version: 19.0.5
+          semantic_version: 19.0.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
