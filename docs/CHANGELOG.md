@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/Faustvii/PlexAniListSync/compare/v1.0.1...v2.0.0) (2022-08-24)
+
+
+* feat(multiple sources)!: mapping urls can be configured in configuration ([932388e](https://github.com/Faustvii/PlexAniListSync/commit/932388ea6c62e714a7cb1e706999d21d29b54f75))
+* feat(multiple sources)!: mapping urls can be configured in configuration ([76907c5](https://github.com/Faustvii/PlexAniListSync/commit/76907c5aacaf7d0f68f0b082fd5b047a43d2c72a))
+
+
+### BREAKING CHANGES
+
+* Rule/Mappings Sources must be defined in configuration (before they were hardcoded)
+* Rule/Mappings Sources must be defined in configuration (before they were hardcoded)
+
 ## [1.0.1](https://github.com/Faustvii/PlexAniListSync/compare/v1.0.0...v1.0.1) (2022-08-24)
 
 
