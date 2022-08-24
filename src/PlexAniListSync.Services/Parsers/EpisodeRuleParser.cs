@@ -22,7 +22,9 @@ public class EpisodeRuleParser : IEpisodeRuleParser
     {
         var mappingSections = rawEpisodeMapping.Split("->");
         if (mappingSections.Length != 2)
+        {
             throw new ArgumentException($"We were unable to parse '{rawEpisodeMapping}'");
+        }
 
         var from = ParseRule(mappingSections[0]);
         var to = ParseRule(mappingSections[1]);
@@ -33,10 +35,16 @@ public class EpisodeRuleParser : IEpisodeRuleParser
     {
         var sections = ruleSection.Split(':');
         if (sections.Length != 2)
+        {
             throw new ArgumentException($"Could not parse sections from '{ruleSection}'");
+        }
+
         var ids = sections[0].Split('|');
         if (ids.Length != 3)
+        {
             throw new ArgumentException($"Could not parse ids from '{ids}'");
+        }
+
         var myAnimeListId = ids[0];
         var kitsuId = ids[1];
         var anilistId = ids[2];
@@ -47,7 +55,9 @@ public class EpisodeRuleParser : IEpisodeRuleParser
         {
             var rangeSection = episodeRangeSection.Split('-');
             if (rangeSection.Length != 2)
+            {
                 throw new ArgumentException($"Could not parse episode range from '{rangeSection}'");
+            }
 
             _ = int.TryParse(rangeSection[0], out var startRange);
             var endRangeParsed = int.TryParse(rangeSection[1], out var endRange);

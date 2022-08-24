@@ -22,7 +22,7 @@ public class DownloadService : IDownloadService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error downloading file from '{Url}' - Error {ErrorMessage}", url, ex.Message);
+            _logger.LogFileDownloadError(url, ex.Message, ex);
         }
         return string.Empty;
     }

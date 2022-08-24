@@ -31,7 +31,7 @@ public sealed class PeriodicDownloaderService : IHostedService, IAsyncDisposable
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("{Service} is running.", nameof(PeriodicDownloaderService));
+        _logger.LogHostedServiceStarting(nameof(PeriodicDownloaderService));
         _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromHours(6));
         return Task.CompletedTask;
     }
@@ -48,7 +48,7 @@ public sealed class PeriodicDownloaderService : IHostedService, IAsyncDisposable
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("{Service} is stopping.", nameof(PeriodicDownloaderService));
+        _logger.LogHostedServiceStopping(nameof(PeriodicDownloaderService));
         _timer?.Change(Timeout.Infinite, 0);
         return Task.CompletedTask;
     }

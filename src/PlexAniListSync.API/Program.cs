@@ -16,7 +16,7 @@ builder.Services.AddOptions();
 
 builder.Services.AddPlex(builder.Configuration);
 builder.Services.AddAnilist(builder.Configuration);
-builder.Services.AddWebhooks(builder.Configuration);
+builder.Services.AddWebhooks();
 builder.Services.AddExtractor();
 builder.Services.AddHttpClients();
 builder.Services.AddHostedServices();

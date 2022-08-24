@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using PlexAniListSync.Models.Webhook;
 using PlexAniListSync.Services.AniList;
-using PlexAniListSync.Services.Extractors;
 using PlexAniListSync.Services.Mappings;
 
 namespace PlexAniListSync.Services.Webhook;
@@ -21,14 +20,15 @@ public class WebhookService : IWebhookService
 
     public async Task<bool> Handle(WebhookData data)
     {
+        _logger.LogWebhookUserWatched(data.User, data.ShowTitle, data.Episode, data.Season);
         var anilistId = _mappingService.GetAniListIdFromTitle(data.ShowTitle, data.Season);
         if (anilistId is default(int))
         {
-            _logger.LogInformation("We were unable to get AniListId from {ShowTitle} - {Season} from mapping files", data.ShowTitle, data.Season);
+            _logger.LogUnableToGetAnilistIdFromMappings(data.ShowTitle, data.Season);
             anilistId = (await _aniListService.FindShow(data.ShowTitle, data.Season)).GetValueOrDefault();
             if (anilistId is default(int))
             {
-                _logger.LogError("We were unable to get AniListId from AniList for {ShowTitle}S{Season} - Aborting", data.ShowTitle, data.Season);
+                _logger.LogUnableToGetAnilistIdError(data.ShowTitle, data.Season);
                 return false;
             }
         }

@@ -11,18 +11,15 @@ namespace PlexAniListSync.API.Controllers;
 [Route("[controller]")]
 public class WebhookController : ControllerBase
 {
-    private readonly ILogger<WebhookController> _logger;
     private readonly IOptions<PlexOptions> _options;
     private readonly IOptions<AniListOptions> _aniOptions;
     private readonly IWebhookService _webhookService;
 
     public WebhookController(
-        ILogger<WebhookController> logger,
         IOptions<PlexOptions> options,
         IOptions<AniListOptions> aniOptions,
         IWebhookService webhookService)
     {
-        _logger = logger;
         _options = options;
         _aniOptions = aniOptions;
         _webhookService = webhookService;
@@ -31,12 +28,6 @@ public class WebhookController : ControllerBase
     [HttpPost(Name = "Webhook")]
     public async Task<IActionResult> Post([FromBody] WebhookData data)
     {
-        _logger.LogInformation(
-            "{User} watched {ShowTitle} episode {Episode} from season {Season}",
-            data.User,
-            data.ShowTitle,
-            data.Episode,
-            data.Season);
         var result = await _webhookService.Handle(data);
         return result ? Ok() : BadRequest("Could not find Anilist show");
     }
