@@ -19,7 +19,7 @@ builder.Services.AddAnilist(builder.Configuration);
 builder.Services.AddWebhooks();
 builder.Services.AddExtractor();
 builder.Services.AddHttpClients();
-builder.Services.AddHostedServices();
+builder.Services.AddHostedServices(builder.Configuration);
 builder.Services.AddMappingServices();
 builder.Services.AddParsers();
 builder.Services.AddDataCache();
