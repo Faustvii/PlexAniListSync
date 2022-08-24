@@ -54,7 +54,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddWebhooks(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddWebhooks(this IServiceCollection services)
     {
         services.AddTransient<IWebhookService, WebhookService>();
         return services;
@@ -83,7 +83,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IMappingService, MappingService>();
         return services;
     }
-    
+
     public static IServiceCollection AddDataCache(this IServiceCollection services)
     {
         services.AddMemoryCache();

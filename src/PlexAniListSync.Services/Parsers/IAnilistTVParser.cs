@@ -1,7 +1,6 @@
-namespace PlexAniListSync.Services.Parsers
+namespace PlexAniListSync.Services.Parsers;
+
+public interface IAnilistTVParser
 {
-    public interface IAnilistTVParser
-    {
-        IReadOnlyList<Models.Mappings.AnilistMapping> ParseMappings(string anilistTVMappingContent);
-    }
+    IReadOnlyList<Models.Mappings.AnilistMapping> ParseMappings(string anilistTVMappingContent);
 }

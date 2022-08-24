@@ -1,9 +1,8 @@
 using PlexAniListSync.Models.Mappings;
 
-namespace PlexAniListSync.Services.Parsers
+namespace PlexAniListSync.Services.Parsers;
+
+public interface IEpisodeRuleParser
 {
-    public interface IEpisodeRuleParser
-    {
-        IReadOnlyList<EpisodeRuleMapping> ParseRules(string ruleContent);
-    }
+    IReadOnlyList<EpisodeRuleMapping> ParseRules(string ruleContent);
 }

@@ -10,9 +10,13 @@ public class Extractor : IExtractor
     public string? ExtractShowId(string plexGuid)
     {
         if (plexGuid.Contains("anidb", StringComparison.OrdinalIgnoreCase))
+        {
             return _aniDBRegex.Match(plexGuid).Value;
+        }
         else if (plexGuid.Contains("tvdb", StringComparison.OrdinalIgnoreCase))
+        {
             return _tvDBRegex.Match(plexGuid).Value;
+        }
 
         return null;
     }

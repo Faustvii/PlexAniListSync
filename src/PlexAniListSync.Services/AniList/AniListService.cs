@@ -4,11 +4,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PlexAniListSync.Models.AniList;
 
-namespace PlexAniListSync.Services.AniList
+namespace PlexAniListSync.Services.AniList;
+
+public class AniListService : IAniListService
 {
-    public class AniListService : IAniListService
-    {
-        private readonly AniClient _client = new();
+    private readonly AniClient _client = new();
         private readonly IOptions<AniListOptions> _options;
         private readonly ILogger<AniListService> _logger;
 
