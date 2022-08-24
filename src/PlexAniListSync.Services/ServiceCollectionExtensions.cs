@@ -7,6 +7,7 @@ using Plex.ServerApi.Api;
 using Plex.ServerApi.Clients;
 using Plex.ServerApi.Clients.Interfaces;
 using PlexAniListSync.Models.AniList;
+using PlexAniListSync.Models.Mappings;
 using PlexAniListSync.Models.Plex;
 using PlexAniListSync.Services.AniList;
 using PlexAniListSync.Services.Caching;
@@ -72,8 +73,9 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddHostedServices(this IServiceCollection services)
+    public static IServiceCollection AddHostedServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.Configure<SourceOptions>(configuration.GetSection(SourceOptions.Key));
         services.AddHostedService<PeriodicDownloaderService>();
         return services;
     }
