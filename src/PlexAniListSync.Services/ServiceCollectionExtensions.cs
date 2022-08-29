@@ -1,3 +1,4 @@
+using AniListNet;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Plex.Api.Factories;
@@ -51,6 +52,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddAnilist(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<AniListOptions>(configuration.GetSection(AniListOptions.Key));
+        services.AddSingleton<AniClient>();
         services.AddTransient<IAniListService, AniListService>();
         return services;
     }

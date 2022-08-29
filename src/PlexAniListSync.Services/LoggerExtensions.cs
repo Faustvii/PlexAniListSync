@@ -17,6 +17,7 @@ internal static class LoggerExtensions
     private static readonly Action<ILogger, string, string, int, int, Exception?> LogWebhookUserWatchedAction;
     private static readonly Action<ILogger, string, int, Exception?> LogUnableToGetAnilistIdErrorAction;
     private static readonly Action<ILogger, string, int, Exception?> LogUnableToGetAnilistIdFromMappingsAction;
+    private static readonly Action<ILogger, string, Exception?> LogUnableToFindTokenFromPlexUserAction;
 
     /// <summary>
     /// Initializes static members of the <see cref="LoggerExtensions"/> class.
@@ -76,12 +77,18 @@ internal static class LoggerExtensions
         LogUnableToGetAnilistIdErrorAction = LoggerMessage.Define<string, int>(
             logLevel: LogLevel.Error,
             eventId: 12,
-            formatString: "We were unable to get AniListId from AniList for {ShowTitle}S{Season} - Aborting");
+            formatString: "We were unable to get AniListId from AniList for {ShowTitle} - S{Season} - Aborting");
 
         LogUnableToGetAnilistIdFromMappingsAction = LoggerMessage.Define<string, int>(
             logLevel: LogLevel.Information,
             eventId: 13,
             formatString: "We were unable to get AniListId from {ShowTitle} - S{Season} from mapping files - Trying Anilist API search");
+
+        LogUnableToFindTokenFromPlexUserAction = LoggerMessage.Define<string>(
+            logLevel: LogLevel.Warning,
+            eventId: 14,
+            formatString: "We were unable to find a Anilist token from plex username '{PlexUsername}'");
+
     }
 
     public static void LogUnexpectedAmoutOfShows(this ILogger logger, int showCount)
@@ -142,5 +149,9 @@ internal static class LoggerExtensions
     public static void LogUnableToGetAnilistIdError(this ILogger logger, string show, int season)
     {
         LogUnableToGetAnilistIdErrorAction(logger, show, season, null);
+    }
+
+    public static void LogUnableToFindTokenFromPlexUser(this ILogger logger, string username){
+        LogUnableToFindTokenFromPlexUserAction(logger, username, null);
     }
 }

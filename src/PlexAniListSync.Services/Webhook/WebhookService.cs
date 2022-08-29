@@ -34,7 +34,7 @@ public class WebhookService : IWebhookService
         }
         var anilistEpisodeNumber = _mappingService.GetEpisodeNumber(data.Episode, anilistId);
 
-        await _aniListService.UpdateShow(anilistId, anilistEpisodeNumber);
+        await _aniListService.UpdateShow(data.User, anilistId, anilistEpisodeNumber);
         return true;
     }
 }

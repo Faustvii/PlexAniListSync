@@ -8,14 +8,15 @@ namespace PlexAniListSync.Services.AniList;
 
 public class AniListService : IAniListService
 {
-    private readonly AniClient _client = new();
+    private readonly AniClient _client;
     private readonly IOptions<AniListOptions> _options;
     private readonly ILogger<AniListService> _logger;
 
-    public AniListService(IOptions<AniListOptions> options, ILogger<AniListService> logger)
+    public AniListService(IOptions<AniListOptions> options, ILogger<AniListService> logger, AniClient client)
     {
         _options = options;
         _logger = logger;
+        _client = client;
         _client.RateChanged += RateLimitHandler;
     }
 
@@ -65,17 +66,22 @@ public class AniListService : IAniListService
         return media;
     }
 
-    public async Task UpdateShow(int anilistId, int episode)
+    public async Task UpdateShow(string username, int anilistId, int episode)
     {
-        if (!_client.IsAuthenticated)
+        var user = _options.Value.Users.FirstOrDefault(x => x.PlexUsernames.Any(t => t.Equals(username, StringComparison.OrdinalIgnoreCase)));
+        if (user == null)
         {
-            var authenticated = await _client.TryAuthenticateAsync(_options.Value.Token);
-            if (authenticated is false)
-            {
-                _logger.LogUnableToAuthenticateAnilist(anilistId, episode);
-                return;
-            }
+            _logger.LogUnableToFindTokenFromPlexUser(username);
+            return;
         }
+
+        var authenticated = await _client.TryAuthenticateAsync(user.Token);
+        if (authenticated is false)
+        {
+            _logger.LogUnableToAuthenticateAnilist(anilistId, episode);
+            return;
+        }
+
         var status = MediaEntryStatus.Current;
         var mediaEntry = await _client.GetMediaEntryAsync(anilistId);
         var completedDate = (DateTime?)null;
