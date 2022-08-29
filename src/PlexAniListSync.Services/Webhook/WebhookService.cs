@@ -21,7 +21,7 @@ public class WebhookService : IWebhookService
     public async Task<bool> Handle(WebhookData data)
     {
         _logger.LogWebhookUserWatched(data.User, data.ShowTitle, data.Episode, data.Season);
-        var anilistId = _mappingService.GetAniListIdFromTitle(data.ShowTitle, data.Season);
+        var anilistId = _mappingService.GetAniListIdFromTitle(data.ShowTitle, data.Season, data.Episode);
         if (anilistId is default(int))
         {
             _logger.LogUnableToGetAnilistIdFromMappings(data.ShowTitle, data.Season);

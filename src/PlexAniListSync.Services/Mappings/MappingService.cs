@@ -14,18 +14,30 @@ public class MappingService : IMappingService
 
     public (int anilistId, int episodeNumber) MapPlexData(string title, int season, int episode)
     {
-        var anilistId = GetAniListIdFromTitle(title, season);
+        var anilistId = GetAniListIdFromTitle(title, season, episode);
         var episodeNumber = GetEpisodeNumber(episode, anilistId);
         return (anilistId, episodeNumber);
     }
 
-    public int GetAniListIdFromTitle(string title, int season)
+    public int GetAniListIdFromTitle(string title, int season, int episode)
     {
         var anilistMappings = _cache.GetAnilistMapping();
 
         var anime = anilistMappings.FirstOrDefault(x => x.Title.Equals(title, StringComparison.OrdinalIgnoreCase) || x.Synonyms.Any(s => s.Equals(title, StringComparison.OrdinalIgnoreCase)));
+        if (anime is null)
+            return 0;
 
-        return anime == null ? 0 : anime.Seasons.First(x => x.Number == season).AnilistId;
+        var seasons = anime.Seasons
+            .Where(x => x.Number == season)
+            .ToList();
+        if (seasons.Count == 1)
+            return seasons.First().AnilistId;
+
+        var animeSeason = seasons.FirstOrDefault(x => x.Start <= episode);
+        if (animeSeason is not null)
+            return animeSeason.AnilistId;
+
+        return anime.Seasons.FirstOrDefault()?.AnilistId ?? 0;
     }
 
     public int GetEpisodeNumber(int episode, int anilistId)
