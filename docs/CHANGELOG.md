@@ -1,3 +1,18 @@
+# [3.0.0](https://github.com/Faustvii/PlexAniListSync/compare/v2.0.0...v3.0.0) (2022-08-29)
+
+
+### Bug Fixes
+
+* season anilist lookup would not take episode into account ([31dd39a](https://github.com/Faustvii/PlexAniListSync/commit/31dd39aac6ffdaa6960b12fb8bb7be50c7362397))
+
+
+* feat(multiple users)!: added support for multiple users ([616d208](https://github.com/Faustvii/PlexAniListSync/commit/616d20838b572811f433b1ba32ade7c47cc9e8a6))
+
+
+### BREAKING CHANGES
+
+* new configuration structure for AniList options
+
 # [2.0.0](https://github.com/Faustvii/PlexAniListSync/compare/v1.0.1...v2.0.0) (2022-08-24)
 
 
