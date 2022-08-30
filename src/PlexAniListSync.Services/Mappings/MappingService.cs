@@ -1,4 +1,3 @@
-using System.Globalization;
 using PlexAniListSync.Services.Caching;
 
 namespace PlexAniListSync.Services.Mappings;
@@ -31,9 +30,9 @@ public class MappingService : IMappingService
             .Where(x => x.Number == season)
             .ToList();
         if (seasons.Count == 1)
-            return seasons.First().AnilistId;
+            return seasons[0].AnilistId;
 
-        var animeSeason = seasons.FirstOrDefault(x => x.Start <= episode);
+        var animeSeason = seasons.Find(x => x.Start <= episode);
         if (animeSeason is not null)
             return animeSeason.AnilistId;
 
@@ -44,7 +43,9 @@ public class MappingService : IMappingService
     {
         var episodeMappings = _cache.GetEpisodeRuleMappings();
 
-        var episodeMapping = episodeMappings.FirstOrDefault(x => x.To.AnilistId == anilistId.ToString(CultureInfo.InvariantCulture));
+        var episodeMapping = episodeMappings
+            .FirstOrDefault(x =>
+                x.To.AnilistId.Equals(anilistId.ToStringInvariantCulture(), StringComparison.OrdinalIgnoreCase));
 
         if (episodeMapping == null)
         {

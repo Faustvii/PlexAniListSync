@@ -28,7 +28,7 @@ public class WebhookController : ControllerBase
     [HttpPost(Name = "Webhook")]
     public async Task<IActionResult> Post([FromBody] WebhookData data)
     {
-        var result = await _webhookService.Handle(data);
+        var result = await _webhookService.HandleAsync(data);
         return result ? Ok() : BadRequest("Could not find Anilist show");
     }
 

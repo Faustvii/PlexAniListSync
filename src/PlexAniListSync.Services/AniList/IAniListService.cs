@@ -2,6 +2,6 @@ namespace PlexAniListSync.Services.AniList;
 
 public interface IAniListService
 {
-    Task<int?> FindShow(string title, int season);
-    Task UpdateShow(string username, int anilistId, int episode);
+    Task<int?> FindShowAsync(string title, int season);
+    Task UpdateShowAsync(string username, int anilistId, int episode);
 }

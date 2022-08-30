@@ -37,22 +37,33 @@ public sealed class PeriodicDownloaderService : IHostedService, IAsyncDisposable
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogHostedServiceStarting(nameof(PeriodicDownloaderService));
-        _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromHours(_optionsAccessor.Value.CheckForUpdateEveryHours));
+        _timer = new Timer(DoWork, state: null, TimeSpan.Zero, TimeSpan.FromHours(_optionsAccessor.Value.CheckForUpdateEveryHours));
         return Task.CompletedTask;
     }
 
+    // We need async void because of Timer expecting void callback
+#pragma warning disable VSTHRD100, AsyncFixer03
     private async void DoWork(object? state)
+#pragma warning restore VSTHRD100, AsyncFixer03
     {
-        var options = _optionsAccessor.Value;
+        try
+        {
+            var options = _optionsAccessor.Value;
 
-        var episodeRuleMappings = await GetEpisodeRuleMappings(options.EpisodeRuleUrls);
-        _cache.SetEpisodeRuleMappings(episodeRuleMappings);
+            var episodeRuleMappings = await GetEpisodeRuleMappingsAsync(options.EpisodeRuleUrls);
+            _cache.SetEpisodeRuleMappings(episodeRuleMappings);
 
-        var anilistMappings = await GetAnilistMappings(options.AnilistMappingUrls);
-        _cache.SetAnilistMappings(anilistMappings);
+            var anilistMappings = await GetAnilistMappingsAsync(options.AnilistMappingUrls);
+            _cache.SetAnilistMappings(anilistMappings);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogUnexpectedHostedServiceError(nameof(PeriodicDownloaderService), ex);
+        }
+
     }
 
-    private async Task<IReadOnlyList<EpisodeRuleMapping>> GetEpisodeRuleMappings(string[] sourceUrls)
+    private async Task<IReadOnlyList<EpisodeRuleMapping>> GetEpisodeRuleMappingsAsync(string[] sourceUrls)
     {
         var episodeRuleMappings = new List<EpisodeRuleMapping>();
         foreach (var sourceUrl in sourceUrls)
@@ -64,7 +75,7 @@ public sealed class PeriodicDownloaderService : IHostedService, IAsyncDisposable
         return episodeRuleMappings;
     }
 
-    private async Task<IReadOnlyList<AnilistMapping>> GetAnilistMappings(string[] sourceUrls)
+    private async Task<IReadOnlyList<AnilistMapping>> GetAnilistMappingsAsync(string[] sourceUrls)
     {
         var anilistMappings = new List<AnilistMapping>();
         foreach (var sourceUrl in sourceUrls)

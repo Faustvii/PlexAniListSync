@@ -20,26 +20,26 @@ public class AniListService : IAniListService
         _client.RateChanged += RateLimitHandler;
     }
 
-    public async Task<int?> FindShow(string title, int season)
+    public async Task<int?> FindShowAsync(string title, int season)
     {
-        var media = await QueryForShow(title, season);
+        var media = await QueryForShowAsync(title, season);
         if (media.Data.Length != 1)
         {
             _logger.LogUnexpectedAmoutOfShows(media.Data.Length);
             return null;
         }
 
-        var id = media.Data.First().Id;
+        var id = media.Data[0].Id;
         return id;
     }
 
-    private async Task<AniPagination<Media>> QueryForShow(string title, int season, int level = 1)
+    private async Task<AniPagination<Media>> QueryForShowAsync(string title, int season, int level = 1)
     {
 
         var query = level switch
         {
-            1 => $"{title} season {season}",
-            2 => $"{title} {season}",
+            1 => $"{title} season {season.ToStringInvariantCulture()}",
+            2 => $"{title} {season.ToStringInvariantCulture()}",
             3 => title,
             _ => title
         };
@@ -60,13 +60,13 @@ public class AniListService : IAniListService
         if (media.Data.Length == 0 && level < 3)
         {
             _logger.LogNoShowFound(filter.Query);
-            media = await QueryForShow(title, season, level + 1);
+            media = await QueryForShowAsync(title, season, level + 1);
         }
 
         return media;
     }
 
-    public async Task UpdateShow(string username, int anilistId, int episode)
+    public async Task UpdateShowAsync(string username, int anilistId, int episode)
     {
         var user = _options.Value.Users.FirstOrDefault(x => x.PlexUsernames.Any(t => t.Equals(username, StringComparison.OrdinalIgnoreCase)));
         if (user == null)

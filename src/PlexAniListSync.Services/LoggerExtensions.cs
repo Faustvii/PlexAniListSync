@@ -2,7 +2,7 @@ using AniListNet.Objects;
 using Microsoft.Extensions.Logging;
 
 namespace PlexAniListSync.Services;
-
+#pragma warning disable MA0003
 internal static class LoggerExtensions
 {
     private static readonly Action<ILogger, string, Exception?> LogUnexpectedAmoutOfShowsAction;
@@ -18,11 +18,11 @@ internal static class LoggerExtensions
     private static readonly Action<ILogger, string, int, Exception?> LogUnableToGetAnilistIdErrorAction;
     private static readonly Action<ILogger, string, int, Exception?> LogUnableToGetAnilistIdFromMappingsAction;
     private static readonly Action<ILogger, string, Exception?> LogUnableToFindTokenFromPlexUserAction;
+    private static readonly Action<ILogger, string, Exception?> LogUnexpectedHostedServiceErrorAction;
 
-    /// <summary>
-    /// Initializes static members of the <see cref="LoggerExtensions"/> class.
-    /// </summary>
+#pragma warning disable MA0051 // I'm okay with this being long
     static LoggerExtensions()
+#pragma warning restore MA0051
     {
         LogUnexpectedAmoutOfShowsAction = LoggerMessage.Define<string>(
             logLevel: LogLevel.Warning,
@@ -88,6 +88,11 @@ internal static class LoggerExtensions
             logLevel: LogLevel.Warning,
             eventId: 14,
             formatString: "We were unable to find a Anilist token from plex username '{PlexUsername}'");
+
+        LogUnexpectedHostedServiceErrorAction = LoggerMessage.Define<string>(
+            logLevel: LogLevel.Error,
+            eventId: 15,
+            formatString: "Unexpected error happened in {Service}");
 
     }
 
@@ -155,4 +160,10 @@ internal static class LoggerExtensions
     {
         LogUnableToFindTokenFromPlexUserAction(logger, username, null);
     }
+
+    public static void LogUnexpectedHostedServiceError(this ILogger logger, string hostedService, Exception ex)
+    {
+        LogUnexpectedHostedServiceErrorAction(logger, hostedService, ex);
+    }
 }
+#pragma warning restore MA0003

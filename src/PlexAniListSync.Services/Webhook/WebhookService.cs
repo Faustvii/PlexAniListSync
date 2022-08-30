@@ -18,14 +18,14 @@ public class WebhookService : IWebhookService
         _aniListService = aniListService;
     }
 
-    public async Task<bool> Handle(WebhookData data)
+    public async Task<bool> HandleAsync(WebhookData data)
     {
         _logger.LogWebhookUserWatched(data.User, data.ShowTitle, data.Episode, data.Season);
         var anilistId = _mappingService.GetAniListIdFromTitle(data.ShowTitle, data.Season, data.Episode);
         if (anilistId is default(int))
         {
             _logger.LogUnableToGetAnilistIdFromMappings(data.ShowTitle, data.Season);
-            anilistId = (await _aniListService.FindShow(data.ShowTitle, data.Season)).GetValueOrDefault();
+            anilistId = (await _aniListService.FindShowAsync(data.ShowTitle, data.Season)).GetValueOrDefault();
             if (anilistId is default(int))
             {
                 _logger.LogUnableToGetAnilistIdError(data.ShowTitle, data.Season);
@@ -34,7 +34,7 @@ public class WebhookService : IWebhookService
         }
         var anilistEpisodeNumber = _mappingService.GetEpisodeNumber(data.Episode, anilistId);
 
-        await _aniListService.UpdateShow(data.User, anilistId, anilistEpisodeNumber);
+        await _aniListService.UpdateShowAsync(data.User, anilistId, anilistEpisodeNumber);
         return true;
     }
 }
