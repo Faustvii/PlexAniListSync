@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.IO;
 using PlexAniListSync.Services.Parsers;
 using Xunit;
 
@@ -6,166 +8,7 @@ namespace PlexAniListSync.UnitTests.Parsers;
 public class EpisodeRuleParserTests
 {
     [Theory]
-    [InlineData(50, @"# This file includes anime relation data for Taiga. It is used to redirect an
-    # episode to another, which is required to handle special episodes and the case
-    # where fansub groups use continuous numbering scheme in their releases.
-    #
-    # Rules are sorted alphabetically by anime title. Rule syntax is:
-    #
-    #   10001|10002|10003:14-26 -> 20001|20002|20003:1-13!
-    #   └─┬─┘ └─┬─┘ └─┬─┘ └─┬─┘    └─┬─┘ └─┬─┘ └─┬─┘ └─┬─┘
-    #     1     2     3     4        1     2     3     4
-    #
-    #   (1) MyAnimeList ID
-    #       <https://myanimelist.net/anime/{id}/{title}>
-    #   (2) Kitsu ID
-    #       <https://kitsu.io/api/edge/anime?filter[text]={title}>
-    #   (3) AniList ID\n#       <https://anilist.co/anime/{id}/{title}>
-    #   (4) Episode number or range
-    #
-    #   - \""?\"" is used for unknown values.\n#   - \""~\"" is used to repeat the source ID.
-    #   - \""!\"" suffix is shorthand for creating a new rule where destination ID is
-    #     redirected to itself.
-    #
-    # If you are editing this file in the installation directory of Taiga, be aware
-    # that it may be overwritten the next time you update the application.
-    #
-    # The latest version of this file can be found at:
-    #   <https://github.com/erengy/anime-relations>
-    #
-    # This file is in the public domain.
-
-    ::meta
-
-    # Do not change this line.
-    - version: 1.3.0
-
-    # Update this date when you add, remove or modify a rule.
-    - last_modified: 2022-07-19
-
-    ::rules
-
-    # 100-man no Inochi no Ue ni Ore wa Tatteiru -> ~ 2nd Season\n- 41380|43367|116242:13-24 -> 44881|43883|127366:1-12!
-
-    # 11eyes -> ~: Momoiro Genmutan
-    - 6682|4662|6682:13 -> 7739|5102|7739:1
-
-    # 3-gatsu no Lion -> ~ 2nd season
-    - 31646|11380|21366:23-44 -> 35180|13401|98478:1-22
-
-    # 3D Kanojo: Real Girl -> ~ 2nd Season
-    - 36793|14276|100526:13-24 -> 37956|41973|102882:1-12!
-
-    # 86 -> ~ 2nd Season
-    - 41457|43066|116589:12-23 -> 48569|44398|131586:1-12!
-
-    # 91 Days -> ~: Toki no Asase/Subete no Kinou/Ashita, Mata Ashita
-    - 32998|11957|21711:13 -> 34777|13598|98778:1
-
-    # Acchi Kocchi (TV) -> ~: Place=Princess
-    - 12291|6701|12291:13 -> 16273|7401|16273:1
-
-    # Aikatsu! -> ~ 2
-    - ?|7205|15061:51-101 -> ?|7972|20181:1-51
-    # Aikatsu! -> ~ 3
-    - ?|7205|15061:102-152 -> ?|9096|20794:1-51
-    # Aikatsu! -> ~ 4
-    - ?|7205|15061:153-178 -> ?|11142|21307:1-26
-    # Aikatsu Stars! -> ~ Hoshi no Tsubasa
-    - ?|?|21648:51-100 -> ?|?|98542:1-50
-    # Aikatsu Friends! -> ~ Kagayaki no Jewel
-    - 37204|41015|101043:51-76 -> 39078|42169|107447:1-26
-
-    # Ajin -> ~ 2nd Season
-    - 31580|11368|21341:14-26 -> 33253|12115|21799:1-13!
-
-    # Ajin OVA -> Ajin 2nd Season OVA
-    - 32015|11615|?:3 -> 36625|41634|?:1
-
-    # Akagami no Shirayuki-hime -> ~ 2nd Season
-    - 30123|10621|21058:13-24 -> 31173|11179|21258:1-12!
-
-    # Akuma no Riddle -> ~: Shousha wa Dare? Nukiuchi Test
-    - 19429|7844|19429:13 -> 24751|8724|20926:1
-
-    # Aldnoah.Zero -> ~ 2nd Season
-    - 22729|8297|20632:13-24 -> 27655|9136|20853:1-12
-
-    # Amagami SS -> ~: Imouto
-    - 8676|5435|8676:26 -> 9925|5943|9925:1
-
-    # Amanchu! -> ~ Special
-    - 31771|11432|21406:13 -> 33818|12471|98536:1
-
-    # Ano Natsu de Matteru -> ~: Bokutachi wa Koukou Saigo no Natsu wo Sugoshinagara, Ano Natsu de Matteiru.
-    - 11433|6508|11433:13 -> 23447|8407|20659:1
-
-    # Ansatsu Kyoushitsu (TV) -> ~: Deai no Jikan
-    - 19759|7973|19759:0 -> 28405|10020|21303:1
-
-    # Another -> ~: The Other - Inga
-    - 11111|6462|11111:0 -> 11701|6569|11701:1
-
-    # Ao Haru Ride -> ~ OVA
-    - 21995|8246|20596:0 -> 24151|8488|20837:1
-    - 21995|8246|20596:13 -> 24151|8488|20837:2
-
-    # Ao Oni The Animation (Movie) -> ~
-    - 33820|12478|21898:0 -> ~|~|~:1
-
-    # Baccano! -> ~ Specials
-    - 2251|2039|2251:14-16 -> 3901|3334|3901:1-3
-
-    # Beastars 2nd Season -> ~
-    - 40935|42904|114194:13-24 -> ~|~|~:1-12
-
-    # Beatless -> ~: Final Stage
-    - 36516|13939|?:21-24 -> 38020|41407|?:1-4!
-    - 36516|13939|?:25-28 -> 38020|41407|?:1-4!
-    - ?|?|100245:25-28 -> ?|?|100245:21-24
-
-    # Berserk (2016) -> Berserk (2017)
-    - 32379|11655|21560:13-24 -> 34055|12569|97643:1-12!
-
-    # Bikini Warriors -> ~ Special
-    - 30782|10920|21192:13 -> 31283|11216|21387:1
-    # Bikini Warriors -> ~ OVA
-    - 30782|10920|21192:14-15 -> 33712|12452|87480:1-2
-
-    # Bishoujo Senshi Sailor Moon -> ~ R
-    - 530|489|530:47-89 -> 740|664|740:1-43!
-    # Bishoujo Senshi Sailor Moon -> ~ S
-    - 530|489|530:90-127 -> 532|491|532:1-38!
-    # Bishoujo Senshi Sailor Moon -> ~ SuperS
-    - 530|489|530:128-166 -> 1239|1115|1239:1-39!
-    # Bishoujo Senshi Sailor Moon -> ~: Sailor Stars
-    - 530|489|530:167-200 -> 996|886|996:1-34!
-    # Bishoujo Senshi Sailor Moon Crystal -> ~ Season III
-    - 14751|7163|14751:27-39 -> 31733|11415|21462:1-13!
-
-    # Black Lagoon -> ~: The Second Barrage
-    - 889|789|889:13-24 -> 1519|1363|1519:1-12!
-
-    # Boku no Hero Academia -> ~ 2nd Season
-    - 31964|11469|21459:14-38 -> 33486|12268|21856:1-25
-    # Boku no Hero Academia 2nd Season -> ~: Hero Note
-    - 33486|12268|21856:0 -> 35262|13313|99308:1
-    # Boku no Hero Academia -> ~ 3rd Season
-    - 31964|11469|21459:39-63 -> 36456|13881|100166:1-25!
-    # Boku no Hero Academia -> ~ 4th Season
-    - 31964|11469|21459:64-88 -> 38408|41971|104276:1-25!
-    # Boku no Hero Academia -> ~ 5th Season
-    - 31964|11469|21459:89-113 -> 41587|43108|117193:1-25!
-
-    # Boku wa Tomodachi ga Sukunai -> ~ Episode 0
-    - 10719|6316|10719:0 -> 10897|6397|10897:1
-
-    # Break Blade 1 -> ~ 2,3,4,5,6
-    - 6772|4708|6772:2 -> 8514|5366|8514:1
-    - 6772|4708|6772:3 -> 9252|5645|9252:1
-    - 6772|4708|6772:4 -> 9465|5743|9465:1
-    - 6772|4708|6772:5 -> 9724|5837|9724:1
-    - 6772|4708|6772:6 -> 10092|6031|10092:1")]
+    [MemberData(nameof(GetFileTestData))]
     [InlineData(1, "::rules\n\n- 41380|43367|116242:13-24 -> 44881|43883|127366:1-12!")]
 
     public void MultipleRulesCanBeParsed(long ruleCount, string content)
@@ -191,5 +34,11 @@ public class EpisodeRuleParserTests
         Assert.Equal(anilistId, mapping.AnilistId);
         Assert.Equal(episodeRange.Length, mapping.EpisodeRange.Length);
         Assert.Equal(episodeRange, mapping.EpisodeRange);
+    }
+
+    public static IEnumerable<object[]> GetFileTestData()
+    {
+        var stringContent = File.ReadAllText("Parsers/rules.test.data");
+        yield return new object[] { 56, stringContent };
     }
 }
