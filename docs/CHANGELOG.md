@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/Faustvii/PlexAniListSync/compare/v3.0.0...v3.0.1) (2022-08-30)
+
+
+### Bug Fixes
+
+* culture wasn't being handled properly ([43025cf](https://github.com/Faustvii/PlexAniListSync/commit/43025cfcd472425b19bf60b785b776f5a68917ae))
+
 # [3.0.0](https://github.com/Faustvii/PlexAniListSync/compare/v2.0.0...v3.0.0) (2022-08-29)
 
 
