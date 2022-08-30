@@ -151,7 +151,8 @@ internal static class LoggerExtensions
         LogUnableToGetAnilistIdErrorAction(logger, show, season, null);
     }
 
-    public static void LogUnableToFindTokenFromPlexUser(this ILogger logger, string username){
+    public static void LogUnableToFindTokenFromPlexUser(this ILogger logger, string username)
+    {
         LogUnableToFindTokenFromPlexUserAction(logger, username, null);
     }
 }

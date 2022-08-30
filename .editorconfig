@@ -6,6 +6,9 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 
 [*.cs]
+# Remove unused usings
+dotnet_diagnostic.IDE0005.severity = error
+
 # Organize usings
 dotnet_sort_system_directives_first = true
 

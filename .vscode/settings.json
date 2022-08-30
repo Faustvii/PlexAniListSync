@@ -12,5 +12,6 @@
     "**/obj": true
   },
   "omnisharp.enableImportCompletion": true,
-  "omnisharp.enableRoslynAnalyzers": true
+  "omnisharp.enableRoslynAnalyzers": true,
+  "omnisharp.enableEditorConfigSupport": true
 }
