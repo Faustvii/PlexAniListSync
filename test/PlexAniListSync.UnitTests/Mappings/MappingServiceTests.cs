@@ -33,7 +33,6 @@ public class MappingServiceTests
     [InlineData(0, "87", "86: Eighty Six", new[] { "86", "Eighty Six" })]
     [InlineData(0, "Six", "86: Eighty Six", new[] { "86", "Eighty Six" })]
     [InlineData(0, "Eighty", "86: Eighty Six", new[] { "86", "Eighty Six" })]
-    // [MemberData(nameof(MappingServiceTestData.GetSeasonTestData), MemberType = typeof(MappingServiceTestData))]
     public void Can_Find_Show_From_Title_Or_Synonyms(int expectedId, string query, string title, string[] synonyms)
     {
         var dataCache = new Mock<IDataCache>();
