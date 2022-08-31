@@ -4,30 +4,40 @@ namespace PlexAniListSync.Services.Parsers;
 
 public class AnilistTVParser : IAnilistTVParser
 {
-    public IReadOnlyList<Models.Mappings.AnilistMapping> ParseMappings(string anilistTVMappingContent)
+    public IReadOnlyList<Models.Mappings.AnilistMapping> ParseMappings(
+        string anilistTVMappingContent
+    )
     {
         var deserializer = new Deserializer();
         var parsed = deserializer.Deserialize<AniListMappings>(anilistTVMappingContent);
-        return parsed.Entries.Select(x => new Models.Mappings.AnilistMapping
-        {
-            Title = x.Title,
-            Synonyms = x.Synonyms,
-            Seasons = x.Seasons
-            .Select(s => new Models.Mappings.AnilistSeason
-            {
-                AnilistId = s.AnilistId,
-                Number = s.Number,
-                Start = s.Start
-            })
-            .ToArray()
-        })
-        .ToList();
+        return parsed.Entries
+            .Select(
+                x =>
+                    new Models.Mappings.AnilistMapping
+                    {
+                        Title = x.Title,
+                        Synonyms = x.Synonyms,
+                        Seasons = x.Seasons
+                            .Select(
+                                s =>
+                                    new Models.Mappings.AnilistSeason
+                                    {
+                                        AnilistId = s.AnilistId,
+                                        Number = s.Number,
+                                        Start = s.Start
+                                    }
+                            )
+                            .ToArray()
+                    }
+            )
+            .ToList();
     }
 
     private record AniListMappings
     {
         [YamlMember(Alias = "entries", ApplyNamingConventions = false)]
-        public IEnumerable<AniListMappingModel> Entries { get; set; } = Array.Empty<AniListMappingModel>();
+        public IEnumerable<AniListMappingModel> Entries { get; set; } =
+            Array.Empty<AniListMappingModel>();
     }
 
     private record AniListMappingModel

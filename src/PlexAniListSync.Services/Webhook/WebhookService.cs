@@ -11,7 +11,11 @@ public class WebhookService : IWebhookService
     private readonly IMappingService _mappingService;
     private readonly IAniListService _aniListService;
 
-    public WebhookService(ILogger<WebhookService> logger, IMappingService mappingService, IAniListService aniListService)
+    public WebhookService(
+        ILogger<WebhookService> logger,
+        IMappingService mappingService,
+        IAniListService aniListService
+    )
     {
         _logger = logger;
         _mappingService = mappingService;
@@ -21,11 +25,17 @@ public class WebhookService : IWebhookService
     public async Task<bool> HandleAsync(WebhookData data)
     {
         _logger.LogWebhookUserWatched(data.User, data.ShowTitle, data.Episode, data.Season);
-        var anilistId = _mappingService.GetAniListIdFromTitle(data.ShowTitle, data.Season, data.Episode);
+        var anilistId = _mappingService.GetAniListIdFromTitle(
+            data.ShowTitle,
+            data.Season,
+            data.Episode
+        );
         if (anilistId is default(int))
         {
             _logger.LogUnableToGetAnilistIdFromMappings(data.ShowTitle, data.Season);
-            anilistId = (await _aniListService.FindShowAsync(data.ShowTitle, data.Season)).GetValueOrDefault();
+            anilistId = (
+                await _aniListService.FindShowAsync(data.ShowTitle, data.Season)
+            ).GetValueOrDefault();
             if (anilistId is default(int))
             {
                 _logger.LogUnableToGetAnilistIdError(data.ShowTitle, data.Season);

@@ -22,13 +22,15 @@ public class MappingService : IMappingService
     {
         var anilistMappings = _cache.GetAnilistMapping();
 
-        var anime = anilistMappings.FirstOrDefault(x => x.Title.Equals(title, StringComparison.OrdinalIgnoreCase) || x.Synonyms.Any(s => s.Equals(title, StringComparison.OrdinalIgnoreCase)));
+        var anime = anilistMappings.FirstOrDefault(
+            x =>
+                x.Title.Equals(title, StringComparison.OrdinalIgnoreCase)
+                || x.Synonyms.Any(s => s.Equals(title, StringComparison.OrdinalIgnoreCase))
+        );
         if (anime is null)
             return 0;
 
-        var seasons = anime.Seasons
-            .Where(x => x.Number == season)
-            .ToList();
+        var seasons = anime.Seasons.Where(x => x.Number == season).ToList();
         if (seasons.Count == 1)
             return seasons[0].AnilistId;
 
@@ -43,9 +45,13 @@ public class MappingService : IMappingService
     {
         var episodeMappings = _cache.GetEpisodeRuleMappings();
 
-        var episodeMapping = episodeMappings
-            .FirstOrDefault(x =>
-                x.To.AnilistId.Equals(anilistId.ToStringInvariantCulture(), StringComparison.OrdinalIgnoreCase));
+        var episodeMapping = episodeMappings.FirstOrDefault(
+            x =>
+                x.To.AnilistId.Equals(
+                    anilistId.ToStringInvariantCulture(),
+                    StringComparison.OrdinalIgnoreCase
+                )
+        );
 
         if (episodeMapping == null)
         {

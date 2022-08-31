@@ -18,7 +18,8 @@ public class WebhookController : ControllerBase
     public WebhookController(
         IOptions<PlexOptions> options,
         IOptions<AniListOptions> aniOptions,
-        IWebhookService webhookService)
+        IWebhookService webhookService
+    )
     {
         _options = options;
         _aniOptions = aniOptions;

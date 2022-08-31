@@ -24,7 +24,8 @@ public sealed class PeriodicDownloaderService : IHostedService, IAsyncDisposable
         IDataCache cache,
         IEpisodeRuleParser episodeRuleParser,
         IAnilistTVParser anilistTVParser,
-        IOptions<SourceOptions> optionsAccessor)
+        IOptions<SourceOptions> optionsAccessor
+    )
     {
         _logger = logger;
         _downloadService = downloadService;
@@ -37,7 +38,12 @@ public sealed class PeriodicDownloaderService : IHostedService, IAsyncDisposable
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogHostedServiceStarting(nameof(PeriodicDownloaderService));
-        _timer = new Timer(DoWork, state: null, TimeSpan.Zero, TimeSpan.FromHours(_optionsAccessor.Value.CheckForUpdateEveryHours));
+        _timer = new Timer(
+            DoWork,
+            state: null,
+            TimeSpan.Zero,
+            TimeSpan.FromHours(_optionsAccessor.Value.CheckForUpdateEveryHours)
+        );
         return Task.CompletedTask;
     }
 
@@ -60,10 +66,11 @@ public sealed class PeriodicDownloaderService : IHostedService, IAsyncDisposable
         {
             _logger.LogUnexpectedHostedServiceError(nameof(PeriodicDownloaderService), ex);
         }
-
     }
 
-    private async Task<IReadOnlyList<EpisodeRuleMapping>> GetEpisodeRuleMappingsAsync(string[] sourceUrls)
+    private async Task<IReadOnlyList<EpisodeRuleMapping>> GetEpisodeRuleMappingsAsync(
+        string[] sourceUrls
+    )
     {
         var episodeRuleMappings = new List<EpisodeRuleMapping>();
         foreach (var sourceUrl in sourceUrls)

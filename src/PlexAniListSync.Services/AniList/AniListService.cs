@@ -13,7 +13,11 @@ public class AniListService : IAniListService
     private readonly IOptions<AniListOptions> _options;
     private readonly ILogger<AniListService> _logger;
 
-    public AniListService(IOptions<AniListOptions> options, ILogger<AniListService> logger, AniClient client)
+    public AniListService(
+        IOptions<AniListOptions> options,
+        ILogger<AniListService> logger,
+        AniClient client
+    )
     {
         _options = options;
         _logger = logger;
@@ -34,9 +38,12 @@ public class AniListService : IAniListService
         return id;
     }
 
-    private async Task<AniPagination<Media>> QueryForShowAsync(string title, int season, int level = 1)
+    private async Task<AniPagination<Media>> QueryForShowAsync(
+        string title,
+        int season,
+        int level = 1
+    )
     {
-
         var query = level switch
         {
             1 => $"{title} season {season.ToStringInvariantCulture()}",
@@ -49,11 +56,11 @@ public class AniListService : IAniListService
         {
             Type = MediaType.Anime,
             Format = new Dictionary<MediaFormat, bool>
-                {
-                    {MediaFormat.TV, true},
-                    {MediaFormat.TVShort, true},
-                    {MediaFormat.Special, true},
-                },
+            {
+                { MediaFormat.TV, true },
+                { MediaFormat.TVShort, true },
+                { MediaFormat.Special, true },
+            },
             Query = query,
         };
 
@@ -69,7 +76,10 @@ public class AniListService : IAniListService
 
     public async Task UpdateShowAsync(string plexUsername, int anilistId, int episode)
     {
-        var users = _options.Value.Users.Where(x => x.PlexUsernames.Any(t => t.Equals(plexUsername, StringComparison.OrdinalIgnoreCase)));
+        var users = _options.Value.Users.Where(
+            x =>
+                x.PlexUsernames.Any(t => t.Equals(plexUsername, StringComparison.OrdinalIgnoreCase))
+        );
         if (!users.Any())
         {
             _logger.LogUnableToFindTokenFromPlexUser(plexUsername);
@@ -117,7 +127,13 @@ public class AniListService : IAniListService
             CompleteDate = completedDate,
         };
 
-        _logger.LogAnilistUpdate(_options.Value.TestMode, anilistId, mutation.Progress, mediaEntry?.MaxProgress, status);
+        _logger.LogAnilistUpdate(
+            _options.Value.TestMode,
+            anilistId,
+            mutation.Progress,
+            mediaEntry?.MaxProgress,
+            status
+        );
 
         if (_options.Value.TestMode is false)
             await _client.SaveMediaEntryAsync(anilistId, mutation);

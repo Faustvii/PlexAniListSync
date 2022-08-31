@@ -8,7 +8,10 @@ namespace PlexAniListSync.UnitTests.Parsers;
 public class AnilistTVParserTests
 {
     [Theory]
-    [MemberData(nameof(AnilistTVParserTestData.GetTestData), MemberType = typeof(AnilistTVParserTestData))]
+    [MemberData(
+        nameof(AnilistTVParserTestData.GetTestData),
+        MemberType = typeof(AnilistTVParserTestData)
+    )]
     public void CanDeserializeCorrectly(AnilistMapping[] expectedMappings, string yamlContent)
     {
         var parser = new AnilistTVParser();
@@ -27,18 +30,27 @@ public static class AnilistTVParserTestData
         yield return s_testOne;
     }
 
-    private static readonly object[] s_testOne = new object[] {
-
-        new[] {
-            new AnilistMapping {
+    private static readonly object[] s_testOne = new object[]
+    {
+        new[]
+        {
+            new AnilistMapping
+            {
                 Title = "86: Eighty Six",
-                Synonyms = new [] {"86", "Eighty Six"},
-                Seasons = new [] {
-                    new AnilistSeason{ Number = 1, AnilistId = 116589},
-                    new AnilistSeason{ Number = 1, AnilistId = 131586, Start = 12}
+                Synonyms = new[] { "86", "Eighty Six" },
+                Seasons = new[]
+                {
+                    new AnilistSeason { Number = 1, AnilistId = 116589 },
+                    new AnilistSeason
+                    {
+                        Number = 1,
+                        AnilistId = 131586,
+                        Start = 12
+                    }
                 }
             }
-        }, @"# PlexAniSync: TheTVDB Series Mappings in English
+        },
+        @"# PlexAniSync: TheTVDB Series Mappings in English
 entries:
   - title: ""86: Eighty Six""
     synonyms:
@@ -52,4 +64,3 @@ entries:
         start: 12"
     };
 }
-

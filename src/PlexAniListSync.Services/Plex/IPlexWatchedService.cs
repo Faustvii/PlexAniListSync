@@ -1,6 +1,3 @@
 namespace PlexAniListSync.Services.Plex;
 
-public interface IPlexWatchedService
-{
-
-}
+public interface IPlexWatchedService { }

@@ -4,8 +4,18 @@ namespace PlexAniListSync.Services.Extractors;
 
 public class Extractor : IExtractor
 {
-    private readonly Regex _aniDBRegex = new(@"(?!com\.plexapp\.agents\.hama:\/\/)(?<=anidb-|anidb2-|anidb3-|anidb4-)([0-9]+)", RegexOptions.ExplicitCapture, TimeSpan.FromSeconds(1));
-    private readonly Regex _tvDBRegex = new(@"(?!com\.plexapp\.agents\.hama:\/\/)(?<=tvdb-|tvdb2-|tvdb3-|tvdb4-|tvdb5-)([0-9]+)", RegexOptions.ExplicitCapture, TimeSpan.FromSeconds(1));
+    private readonly Regex _aniDBRegex =
+        new(
+            @"(?!com\.plexapp\.agents\.hama:\/\/)(?<=anidb-|anidb2-|anidb3-|anidb4-)([0-9]+)",
+            RegexOptions.ExplicitCapture,
+            TimeSpan.FromSeconds(1)
+        );
+    private readonly Regex _tvDBRegex =
+        new(
+            @"(?!com\.plexapp\.agents\.hama:\/\/)(?<=tvdb-|tvdb2-|tvdb3-|tvdb4-|tvdb5-)([0-9]+)",
+            RegexOptions.ExplicitCapture,
+            TimeSpan.FromSeconds(1)
+        );
 
     public string? ExtractShowId(string plexGuid)
     {
