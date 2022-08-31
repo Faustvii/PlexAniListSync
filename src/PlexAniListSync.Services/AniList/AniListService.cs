@@ -3,6 +3,7 @@ using AniListNet.Objects;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PlexAniListSync.Models.AniList;
+using static PlexAniListSync.Models.AniList.AniListOptions;
 
 namespace PlexAniListSync.Services.AniList;
 
@@ -66,15 +67,23 @@ public class AniListService : IAniListService
         return media;
     }
 
-    public async Task UpdateShowAsync(string username, int anilistId, int episode)
+    public async Task UpdateShowAsync(string plexUsername, int anilistId, int episode)
     {
-        var user = _options.Value.Users.FirstOrDefault(x => x.PlexUsernames.Any(t => t.Equals(username, StringComparison.OrdinalIgnoreCase)));
-        if (user == null)
+        var users = _options.Value.Users.Where(x => x.PlexUsernames.Any(t => t.Equals(plexUsername, StringComparison.OrdinalIgnoreCase)));
+        if (!users.Any())
         {
-            _logger.LogUnableToFindTokenFromPlexUser(username);
+            _logger.LogUnableToFindTokenFromPlexUser(plexUsername);
             return;
         }
 
+        foreach (var user in users)
+        {
+            await UpdateShowForAnilistUserAsync(user, anilistId, episode);
+        }
+    }
+
+    private async Task UpdateShowForAnilistUserAsync(AniListUser user, int anilistId, int episode)
+    {
         var authenticated = await _client.TryAuthenticateAsync(user.Token);
         if (authenticated is false)
         {
