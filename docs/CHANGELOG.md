@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.0.1...v3.1.0) (2022-09-01)
+
+
+### Features
+
+* update multiple anilist users from one plex user ([d187009](https://github.com/Faustvii/PlexAniListSync/commit/d187009b89e53c7247d59138268adf5c4ac94794))
+
 ## [3.0.1](https://github.com/Faustvii/PlexAniListSync/compare/v3.0.0...v3.0.1) (2022-08-30)
 
 
