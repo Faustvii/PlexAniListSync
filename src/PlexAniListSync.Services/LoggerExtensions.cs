@@ -8,56 +8,19 @@ internal static class LoggerExtensions
 {
     private static readonly Action<ILogger, string, Exception?> LogUnexpectedAmoutOfShowsAction;
     private static readonly Action<ILogger, string, Exception?> LogNoShowFoundAction;
-    private static readonly Action<
-        ILogger,
-        int,
-        int,
-        Exception?
-    > LogUnableToAuthenticateAnilistAction;
-    private static readonly Action<
-        ILogger,
-        bool,
-        int,
-        int?,
-        int?,
-        string,
-        Exception?
-    > LogAnilistUpdateAction;
+    private static readonly Action<ILogger, int, int, Exception?> LogUnableToAuthenticateAnilistAction;
+    private static readonly Action<ILogger, bool, int, int?, int?, string, Exception?> LogAnilistUpdateAction;
     private static readonly Action<ILogger, int, Exception?> LogAnilistRateLimitAction;
     private static readonly Action<ILogger, int, int, Exception?> LogAnilistUpdateSkippedAction;
     private static readonly Action<ILogger, string, Exception?> LogHostedServiceStartingAction;
     private static readonly Action<ILogger, string, Exception?> LogHostedServiceStoppingAction;
     private static readonly Action<ILogger, string, string, Exception?> LogFileDownloadErrorAction;
-    private static readonly Action<
-        ILogger,
-        string,
-        string,
-        int,
-        int,
-        Exception?
-    > LogWebhookUserWatchedAction;
-    private static readonly Action<
-        ILogger,
-        string,
-        int,
-        Exception?
-    > LogUnableToGetAnilistIdErrorAction;
-    private static readonly Action<
-        ILogger,
-        string,
-        int,
-        Exception?
-    > LogUnableToGetAnilistIdFromMappingsAction;
-    private static readonly Action<
-        ILogger,
-        string,
-        Exception?
-    > LogUnableToFindTokenFromPlexUserAction;
-    private static readonly Action<
-        ILogger,
-        string,
-        Exception?
-    > LogUnexpectedHostedServiceErrorAction;
+    private static readonly Action<ILogger, string, string, int, int, Exception?> LogWebhookUserWatchedAction;
+    private static readonly Action<ILogger, string, int, Exception?> LogUnableToGetAnilistIdErrorAction;
+    private static readonly Action<ILogger, string, int, Exception?> LogUnableToGetAnilistIdFromMappingsAction;
+    private static readonly Action<ILogger, string, Exception?> LogUnableToFindTokenFromPlexUserAction;
+    private static readonly Action<ILogger, string, Exception?> LogUnexpectedHostedServiceErrorAction;
+    private static readonly Action<ILogger, string, string, Exception?> LogOnlyOneShowMatchedExactTitleAction;
 
 #pragma warning disable MA0051 // I'm okay with this being long
     static LoggerExtensions()
@@ -88,7 +51,7 @@ internal static class LoggerExtensions
         );
 
         LogAnilistRateLimitAction = LoggerMessage.Define<int>(
-            logLevel: LogLevel.Information,
+            logLevel: LogLevel.Debug,
             eventId: 5,
             formatString: "Ratelimit left {RateRemaining}"
         );
@@ -146,6 +109,12 @@ internal static class LoggerExtensions
             eventId: 15,
             formatString: "Unexpected error happened in {Service}"
         );
+
+        LogOnlyOneShowMatchedExactTitleAction = LoggerMessage.Define<string, string>(
+            logLevel: LogLevel.Error,
+            eventId: 16,
+            formatString: "We managed to find only one exact match from '{PossibleShows}' with '{Title}'"
+        );
     }
 
     public static void LogUnexpectedAmoutOfShows(this ILogger logger, int showCount)
@@ -158,11 +127,7 @@ internal static class LoggerExtensions
         LogNoShowFoundAction(logger, query, null);
     }
 
-    public static void LogUnableToAuthenticateAnilist(
-        this ILogger logger,
-        int anilistId,
-        int episode
-    )
+    public static void LogUnableToAuthenticateAnilist(this ILogger logger, int anilistId, int episode)
     {
         LogUnableToAuthenticateAnilistAction(logger, anilistId, episode, null);
     }
@@ -176,15 +141,7 @@ internal static class LoggerExtensions
         MediaEntryStatus status
     )
     {
-        LogAnilistUpdateAction(
-            logger,
-            testMode,
-            anilistId,
-            episode,
-            maxEpisodes,
-            status.ToString(),
-            null
-        );
+        LogAnilistUpdateAction(logger, testMode, anilistId, episode, maxEpisodes, status.ToString(), null);
     }
 
     public static void LogAnilistRatelimit(this ILogger logger, int rateRemaining)
@@ -207,32 +164,17 @@ internal static class LoggerExtensions
         LogHostedServiceStoppingAction(logger, serviceName, null);
     }
 
-    public static void LogFileDownloadError(
-        this ILogger logger,
-        string url,
-        string errorMessage,
-        Exception? ex = null
-    )
+    public static void LogFileDownloadError(this ILogger logger, string url, string errorMessage, Exception? ex = null)
     {
         LogFileDownloadErrorAction(logger, url, errorMessage, ex);
     }
 
-    public static void LogWebhookUserWatched(
-        this ILogger logger,
-        string user,
-        string show,
-        int episode,
-        int season
-    )
+    public static void LogWebhookUserWatched(this ILogger logger, string user, string show, int episode, int season)
     {
         LogWebhookUserWatchedAction(logger, user, show, episode, season, null);
     }
 
-    public static void LogUnableToGetAnilistIdFromMappings(
-        this ILogger logger,
-        string show,
-        int season
-    )
+    public static void LogUnableToGetAnilistIdFromMappings(this ILogger logger, string show, int season)
     {
         LogUnableToGetAnilistIdFromMappingsAction(logger, show, season, null);
     }
@@ -247,13 +189,18 @@ internal static class LoggerExtensions
         LogUnableToFindTokenFromPlexUserAction(logger, username, null);
     }
 
-    public static void LogUnexpectedHostedServiceError(
-        this ILogger logger,
-        string hostedService,
-        Exception ex
-    )
+    public static void LogUnexpectedHostedServiceError(this ILogger logger, string hostedService, Exception ex)
     {
         LogUnexpectedHostedServiceErrorAction(logger, hostedService, ex);
+    }
+
+    public static void LogOnlyOneShowMatchedExactTitle(
+        this ILogger logger,
+        string title,
+        IEnumerable<string> possibleShows
+    )
+    {
+        LogOnlyOneShowMatchedExactTitleAction(logger, string.Join(", ", possibleShows), title, null);
     }
 }
 #pragma warning restore MA0003

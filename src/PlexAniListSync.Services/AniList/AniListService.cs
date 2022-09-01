@@ -13,11 +13,7 @@ public class AniListService : IAniListService
     private readonly IOptions<AniListOptions> _options;
     private readonly ILogger<AniListService> _logger;
 
-    public AniListService(
-        IOptions<AniListOptions> options,
-        ILogger<AniListService> logger,
-        AniClient client
-    )
+    public AniListService(IOptions<AniListOptions> options, ILogger<AniListService> logger, AniClient client)
     {
         _options = options;
         _logger = logger;
@@ -31,6 +27,12 @@ public class AniListService : IAniListService
         if (media.Data.Length != 1)
         {
             _logger.LogUnexpectedAmoutOfShows(media.Data.Length);
+            if (media.Data.Where(x => TitleMatchesExactlyIgnoreCase(x, title)).Take(2).Count() == 1)
+            {
+                _logger.LogOnlyOneShowMatchedExactTitle(title, media.Data.Select(x => x.Title.PreferredTitle));
+                return media.Data.SingleOrDefault(x => TitleMatchesExactlyIgnoreCase(x, title))?.Id;
+            }
+
             return null;
         }
 
@@ -38,11 +40,16 @@ public class AniListService : IAniListService
         return id;
     }
 
-    private async Task<AniPagination<Media>> QueryForShowAsync(
-        string title,
-        int season,
-        int level = 1
-    )
+    private static bool TitleMatchesExactlyIgnoreCase(Media media, string title)
+    {
+        return title.Equals(media.Title.EnglishTitle, StringComparison.OrdinalIgnoreCase)
+            || title.Equals(media.Title.RomajiTitle, StringComparison.OrdinalIgnoreCase)
+            || title.Equals(media.Title.PreferredTitle, StringComparison.OrdinalIgnoreCase)
+            || title.Equals(media.Title.RomajiTitle, StringComparison.OrdinalIgnoreCase)
+            || media.Synonyms.Any(x => title.Equals(x, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private async Task<AniPagination<Media>> QueryForShowAsync(string title, int season, int level = 1)
     {
         var query = level switch
         {
@@ -77,8 +84,7 @@ public class AniListService : IAniListService
     public async Task UpdateShowAsync(string plexUsername, int anilistId, int episode)
     {
         var users = _options.Value.Users.Where(
-            x =>
-                x.PlexUsernames.Any(t => t.Equals(plexUsername, StringComparison.OrdinalIgnoreCase))
+            x => x.PlexUsernames.Any(t => t.Equals(plexUsername, StringComparison.OrdinalIgnoreCase))
         );
         if (!users.Any())
         {
