@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/Faustvii/PlexAniListSync/compare/v3.1.0...v3.1.1) (2022-09-06)
+
+
+### Bug Fixes
+
+* improved anilist matching ([4a86b0e](https://github.com/Faustvii/PlexAniListSync/commit/4a86b0e3f9935a3094956ce534d8b994eb4b5ded))
+
 # [3.1.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.0.1...v3.1.0) (2022-09-01)
 
 
