@@ -2,16 +2,20 @@ name: Build
 on:
   pull_request:
     paths:
-      - 'src/**'
-      - 'test/**'
-      - '.github/**'
-      - 'Dockerfile'
+      - "src/**"
+      - "test/**"
+      - ".github/**"
+      - "Dockerfile"
+    branches:
+      - main
   push:
     paths:
-      - 'src/**'
-      - 'test/**'
-      - '.github/**'
-      - 'Dockerfile'
+      - "src/**"
+      - "test/**"
+      - ".github/**"
+      - "Dockerfile"
+    branches:
+      - main
 
 permissions:
   contents: write # to be able to publish a GitHub release
@@ -32,21 +36,6 @@ jobs:
             6.0.x
       - run: dotnet build ./src/PlexAniListSync.API/
       - run: dotnet test ./test/PlexAniListSync.UnitTests/
-
-  # build-and-publish-latest:
-  #   needs: build-and-test # Only if build and test passed
-  #   runs-on: ubuntu-latest
-  #   if: github.ref == 'refs/heads/main' # Running this job only for main branch
-
-  #   steps:
-  #   - uses: actions/checkout@v2 # Checking out the repo
-
-  #   - name: Build and Publish latest Docker image
-  #     uses: VaultVulp/gp-docker-action@1.2.0
-  #     with:
-  #       github-token: ${{ secrets.GITHUB_TOKEN }} # Provide GITHUB_TOKEN to login into the GitHub Packages
-  #       image-name: PlexAniListSync # Provide only Docker image name, tag will be automatically set to latest
-  #       dockerfile: Dockerfile
 
   get_next_version:
     needs: build-and-test # Only if build and test passed

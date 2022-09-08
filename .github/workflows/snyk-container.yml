@@ -15,13 +15,13 @@ name: Snyk Container
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
       - ".github/workflows/snyk-container.yml"
       - "Dockerfile"
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
       - ".github/workflows/snyk-container.yml"
       - "Dockerfile"
@@ -36,23 +36,23 @@ jobs:
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Build a Docker image
-      run: docker build -t your/image-to-test .
-    - name: Run Snyk to check Docker image for vulnerabilities
-      # Snyk can be used to break the build when it detects vulnerabilities.
-      # In this case we want to upload the issues to GitHub Code Scanning
-      continue-on-error: true
-      uses: snyk/actions/docker@dc22abdbe8ec00e2a925256fef96f319ca5510ce
-      env:
-        # In order to use the Snyk Action you will need to have a Snyk API token.
-        # More details in https://github.com/snyk/actions#getting-your-snyk-token
-        # or you can signup for free at https://snyk.io/login
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        image: your/image-to-test
-        args: --file=Dockerfile
-    - name: Upload result to GitHub Code Scanning
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: snyk.sarif
+      - uses: actions/checkout@v3
+      - name: Build a Docker image
+        run: docker build -t your/image-to-test .
+      - name: Run Snyk to check Docker image for vulnerabilities
+        # Snyk can be used to break the build when it detects vulnerabilities.
+        # In this case we want to upload the issues to GitHub Code Scanning
+        continue-on-error: true
+        uses: snyk/actions/docker@dc22abdbe8ec00e2a925256fef96f319ca5510ce
+        env:
+          # In order to use the Snyk Action you will need to have a Snyk API token.
+          # More details in https://github.com/snyk/actions#getting-your-snyk-token
+          # or you can signup for free at https://snyk.io/login
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: your/image-to-test
+          args: --file=Dockerfile
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk.sarif
