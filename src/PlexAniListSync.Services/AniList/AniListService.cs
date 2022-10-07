@@ -72,7 +72,7 @@ public class AniListService : IAniListService
         };
 
         var media = await _client.SearchMediaAsync(filter);
-        if (media.Data.Length == 0 && level < 3)
+        if (media.Data.Length != 1 && level < 3)
         {
             _logger.LogNoShowFound(filter.Query);
             media = await QueryForShowAsync(title, season, level + 1);

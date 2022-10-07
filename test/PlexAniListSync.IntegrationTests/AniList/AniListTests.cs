@@ -12,6 +12,7 @@ public class AniListTests
 {
     [Theory]
     [InlineData(108241, "Gleipnir", 1)]
+    [InlineData(139587, "Tensei Shitara Ken Deshita", 1)]
     public async Task CanRetrieveAniListIdByTitleOnAPI(int expectedId, string title, int season)
     {
         var anilistOptions = new AniListOptions
