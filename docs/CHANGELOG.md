@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/Faustvii/PlexAniListSync/compare/v3.1.1...v3.1.2) (2022-10-07)
+
+
+### Bug Fixes
+
+* Anilist did not work properly when multiple results returned ([c650112](https://github.com/Faustvii/PlexAniListSync/commit/c65011210d038238f70ee936a74b9e80a30fb7dd))
+
 ## [3.1.1](https://github.com/Faustvii/PlexAniListSync/compare/v3.1.0...v3.1.1) (2022-09-06)
 
 
