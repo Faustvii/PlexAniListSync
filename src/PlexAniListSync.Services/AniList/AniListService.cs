@@ -67,6 +67,7 @@ public class AniListService : IAniListService
                 { MediaFormat.TV, true },
                 { MediaFormat.TVShort, true },
                 { MediaFormat.Special, true },
+                { MediaFormat.ONA, true },
             },
             Query = query,
         };
