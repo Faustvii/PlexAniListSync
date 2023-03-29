@@ -1,3 +1,10 @@
+## [3.1.3](https://github.com/Faustvii/PlexAniListSync/compare/v3.1.2...v3.1.3) (2023-03-29)
+
+
+### Bug Fixes
+
+* Added ONA as allowed filter type on anilist api call ([993c4d0](https://github.com/Faustvii/PlexAniListSync/commit/993c4d0271141f6d3db8442ea75bbfc678b716a2))
+
 ## [3.1.2](https://github.com/Faustvii/PlexAniListSync/compare/v3.1.1...v3.1.2) (2022-10-07)
 
 
