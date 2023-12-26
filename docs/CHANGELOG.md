@@ -1,3 +1,10 @@
+## [3.1.4](https://github.com/Faustvii/PlexAniListSync/compare/v3.1.3...v3.1.4) (2023-12-26)
+
+
+### Bug Fixes
+
+* Remove a few ambigious special characters before title compare ([93e877a](https://github.com/Faustvii/PlexAniListSync/commit/93e877a36c4ec3090936f3c692e2f5c5eeaf433b))
+
 ## [3.1.3](https://github.com/Faustvii/PlexAniListSync/compare/v3.1.2...v3.1.3) (2023-03-29)
 
 
