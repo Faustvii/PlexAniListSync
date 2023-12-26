@@ -42,11 +42,23 @@ public class AniListService : IAniListService
 
     private static bool TitleMatchesExactlyIgnoreCase(Media media, string title)
     {
-        return title.Equals(media.Title.EnglishTitle, StringComparison.OrdinalIgnoreCase)
-            || title.Equals(media.Title.RomajiTitle, StringComparison.OrdinalIgnoreCase)
-            || title.Equals(media.Title.PreferredTitle, StringComparison.OrdinalIgnoreCase)
-            || title.Equals(media.Title.RomajiTitle, StringComparison.OrdinalIgnoreCase)
-            || media.Synonyms.Any(x => title.Equals(x, StringComparison.OrdinalIgnoreCase));
+        var safeTitle = RemoveAnnoyingCharacters(title);
+        return safeTitle.Equals(RemoveAnnoyingCharacters(media.Title.EnglishTitle), StringComparison.OrdinalIgnoreCase)
+            || safeTitle.Equals(RemoveAnnoyingCharacters(media.Title.RomajiTitle), StringComparison.OrdinalIgnoreCase)
+            || safeTitle.Equals(RemoveAnnoyingCharacters(media.Title.PreferredTitle), StringComparison.OrdinalIgnoreCase)
+            || safeTitle.Equals(RemoveAnnoyingCharacters(media.Title.RomajiTitle), StringComparison.OrdinalIgnoreCase)
+            || media.Synonyms.Any(x => safeTitle.Equals(RemoveAnnoyingCharacters(x), StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static string? RemoveAnnoyingCharacters(string? title)
+    {   // Plex might send ' or ` instead of ' and AniList might use either
+        // so we remove them before compare
+        if (title is null)
+            return null;
+
+        return title.Replace("’", string.Empty)
+        .Replace("`", string.Empty)
+        .Replace("'", string.Empty);
     }
 
     private async Task<AniPagination<Media>> QueryForShowAsync(string title, int season, int level = 1)
