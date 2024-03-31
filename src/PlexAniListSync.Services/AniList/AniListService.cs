@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using AniListNet;
 using AniListNet.Objects;
 using Microsoft.Extensions.Logging;
@@ -45,20 +46,27 @@ public class AniListService : IAniListService
         var safeTitle = RemoveAnnoyingCharacters(title);
         return safeTitle.Equals(RemoveAnnoyingCharacters(media.Title.EnglishTitle), StringComparison.OrdinalIgnoreCase)
             || safeTitle.Equals(RemoveAnnoyingCharacters(media.Title.RomajiTitle), StringComparison.OrdinalIgnoreCase)
-            || safeTitle.Equals(RemoveAnnoyingCharacters(media.Title.PreferredTitle), StringComparison.OrdinalIgnoreCase)
+            || safeTitle.Equals(
+                RemoveAnnoyingCharacters(media.Title.PreferredTitle),
+                StringComparison.OrdinalIgnoreCase
+            )
             || safeTitle.Equals(RemoveAnnoyingCharacters(media.Title.RomajiTitle), StringComparison.OrdinalIgnoreCase)
-            || media.Synonyms.Any(x => safeTitle.Equals(RemoveAnnoyingCharacters(x), StringComparison.OrdinalIgnoreCase));
+            || media.Synonyms.Any(
+                x => safeTitle.Equals(RemoveAnnoyingCharacters(x), StringComparison.OrdinalIgnoreCase)
+            );
     }
 
+    [return: NotNullIfNotNull(nameof(title))]
     private static string? RemoveAnnoyingCharacters(string? title)
-    {   // Plex might send ' or ` instead of ' and AniList might use either
+    { // Plex might send ' or ` instead of ' and AniList might use either
         // so we remove them before compare
         if (title is null)
             return null;
 
-        return title.Replace("’", string.Empty)
-        .Replace("`", string.Empty)
-        .Replace("'", string.Empty);
+        return title
+            .Replace("’", string.Empty, StringComparison.OrdinalIgnoreCase)
+            .Replace("`", string.Empty, StringComparison.OrdinalIgnoreCase)
+            .Replace("'", string.Empty, StringComparison.OrdinalIgnoreCase);
     }
 
     private async Task<AniPagination<Media>> QueryForShowAsync(string title, int season, int level = 1)

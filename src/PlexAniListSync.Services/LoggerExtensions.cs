@@ -15,7 +15,7 @@ internal static class LoggerExtensions
     private static readonly Action<ILogger, string, Exception?> LogHostedServiceStartingAction;
     private static readonly Action<ILogger, string, Exception?> LogHostedServiceStoppingAction;
     private static readonly Action<ILogger, string, string, Exception?> LogFileDownloadErrorAction;
-    private static readonly Action<ILogger, string, string, int, int, Exception?> LogWebhookUserWatchedAction;
+    private static readonly Action<ILogger, string, string, int, int, string, Exception?> LogWebhookUserWatchedAction;
     private static readonly Action<ILogger, string, int, Exception?> LogUnableToGetAnilistIdErrorAction;
     private static readonly Action<ILogger, string, int, Exception?> LogUnableToGetAnilistIdFromMappingsAction;
     private static readonly Action<ILogger, string, Exception?> LogUnableToFindTokenFromPlexUserAction;
@@ -80,10 +80,10 @@ internal static class LoggerExtensions
             formatString: "Error downloading file from '{Url}' - Error {ErrorMessage}"
         );
 
-        LogWebhookUserWatchedAction = LoggerMessage.Define<string, string, int, int>(
+        LogWebhookUserWatchedAction = LoggerMessage.Define<string, string, int, int, string>(
             logLevel: LogLevel.Information,
             eventId: 10,
-            formatString: "{User} watched {ShowTitle} episode {Episode} from season {Season}"
+            formatString: "{User} watched {ShowTitle} episode {Episode} from season {Season} - PlexGuid: {PlexGuid}"
         );
 
         LogUnableToGetAnilistIdErrorAction = LoggerMessage.Define<string, int>(
@@ -169,9 +169,16 @@ internal static class LoggerExtensions
         LogFileDownloadErrorAction(logger, url, errorMessage, ex);
     }
 
-    public static void LogWebhookUserWatched(this ILogger logger, string user, string show, int episode, int season)
+    public static void LogWebhookUserWatched(
+        this ILogger logger,
+        string user,
+        string show,
+        int episode,
+        int season,
+        string plexGuid
+    )
     {
-        LogWebhookUserWatchedAction(logger, user, show, episode, season, null);
+        LogWebhookUserWatchedAction(logger, user, show, episode, season, plexGuid, null);
     }
 
     public static void LogUnableToGetAnilistIdFromMappings(this ILogger logger, string show, int season)

@@ -11,21 +11,12 @@ public class MappingService : IMappingService
         _cache = cache;
     }
 
-    public (int anilistId, int episodeNumber) MapPlexData(string title, int season, int episode)
-    {
-        var anilistId = GetAniListIdFromTitle(title, season, episode);
-        var episodeNumber = GetEpisodeNumber(episode, anilistId);
-        return (anilistId, episodeNumber);
-    }
-
-    public int GetAniListIdFromTitle(string title, int season, int episode)
+    public int GetAniListIdFromPlexGuid(string plexGuid, int season, int episode)
     {
         var anilistMappings = _cache.GetAnilistMapping();
 
         var anime = anilistMappings.FirstOrDefault(
-            x =>
-                x.Title.Equals(title, StringComparison.OrdinalIgnoreCase)
-                || x.Synonyms.Any(s => s.Equals(title, StringComparison.OrdinalIgnoreCase))
+            x => x.LookupIds.Any(x => x.Equals(plexGuid, StringComparison.OrdinalIgnoreCase))
         );
         if (anime is null)
             return 0;
@@ -46,11 +37,7 @@ public class MappingService : IMappingService
         var episodeMappings = _cache.GetEpisodeRuleMappings();
 
         var episodeMapping = episodeMappings.FirstOrDefault(
-            x =>
-                x.To.AnilistId.Equals(
-                    anilistId.ToStringInvariantCulture(),
-                    StringComparison.OrdinalIgnoreCase
-                )
+            x => x.To.AnilistId.Equals(anilistId.ToStringInvariantCulture(), StringComparison.OrdinalIgnoreCase)
         );
 
         if (episodeMapping == null)

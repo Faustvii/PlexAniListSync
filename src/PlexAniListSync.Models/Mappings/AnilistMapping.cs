@@ -4,7 +4,7 @@ public record AnilistMapping
 {
     public string Title { get; set; } = string.Empty;
 
-    public string[] Synonyms { get; set; } = Array.Empty<string>();
+    public string[] LookupIds { get; set; } = Array.Empty<string>();
 
     public AnilistSeason[] Seasons { get; set; } = Array.Empty<AnilistSeason>();
 }

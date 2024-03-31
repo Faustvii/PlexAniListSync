@@ -24,18 +24,12 @@ public class WebhookService : IWebhookService
 
     public async Task<bool> HandleAsync(WebhookData data)
     {
-        _logger.LogWebhookUserWatched(data.User, data.ShowTitle, data.Episode, data.Season);
-        var anilistId = _mappingService.GetAniListIdFromTitle(
-            data.ShowTitle,
-            data.Season,
-            data.Episode
-        );
+        _logger.LogWebhookUserWatched(data.User, data.ShowTitle, data.Episode, data.Season, data.PlexGuid);
+        var anilistId = _mappingService.GetAniListIdFromPlexGuid(data.PlexGuid, data.Season, data.Episode);
         if (anilistId is default(int))
         {
             _logger.LogUnableToGetAnilistIdFromMappings(data.ShowTitle, data.Season);
-            anilistId = (
-                await _aniListService.FindShowAsync(data.ShowTitle, data.Season)
-            ).GetValueOrDefault();
+            anilistId = (await _aniListService.FindShowAsync(data.ShowTitle, data.Season)).GetValueOrDefault();
             if (anilistId is default(int))
             {
                 _logger.LogUnableToGetAnilistIdError(data.ShowTitle, data.Season);
