@@ -4,12 +4,7 @@
     [
       "@semantic-release/commit-analyzer",
       {
-        "preset": "conventionalcommits",
-        "releaseRules": [
-          { "type": "docs", "release": "patch" },
-          { "type": "style", "release": "patch" },
-          { "type": "refactor", "release": "patch" }
-        ]
+        "preset": "conventionalcommits"
       }
     ],
     "@semantic-release/release-notes-generator"
