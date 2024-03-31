@@ -1,3 +1,10 @@
+# [3.2.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.1.4...v3.2.0) (2024-03-31)
+
+
+### Features
+
+* updated to use new yaml format ([5cbf8d5](https://github.com/Faustvii/PlexAniListSync/commit/5cbf8d5eb9f26005d2ae2bc125716c538b9fad5a))
+
 ## [3.1.4](https://github.com/Faustvii/PlexAniListSync/compare/v3.1.3...v3.1.4) (2023-12-26)
 
 
