@@ -56,7 +56,7 @@ public class AniListService : IAniListService
             );
     }
 
-    [return: NotNullIfNotNull(nameof(title))]
+    [return: NotNullIfNotNull("title")]
     private static string? RemoveAnnoyingCharacters(string? title)
     { // Plex might send ' or ` instead of ' and AniList might use either
         // so we remove them before compare

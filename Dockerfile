@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine3.16-amd64 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:6.0.420-alpine3.19-amd64 AS build-env
 WORKDIR /app
 EXPOSE 80/tcp
 
@@ -23,7 +23,7 @@ COPY ./src/ ./src
 RUN dotnet publish ./src/PlexAniListSync.API/ -c Release -o out
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:6.0.10-alpine3.16-amd64
+FROM mcr.microsoft.com/dotnet/aspnet:6.0.28-alpine3.19-amd64
 WORKDIR /app
 COPY --from=build-env /app/out .
 ENV DOTNET_EnableDiagnostics=0
