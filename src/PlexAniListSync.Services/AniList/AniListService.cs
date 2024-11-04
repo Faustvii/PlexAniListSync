@@ -95,6 +95,7 @@ public class AniListService : IAniListService
                 { MediaFormat.Special, true },
                 { MediaFormat.ONA, true },
             },
+            Status = new Dictionary<MediaStatus, bool> { { MediaStatus.NotYetReleased, false }, },
             Query = query,
         };
 
