@@ -1,3 +1,10 @@
+## [3.2.1](https://github.com/Faustvii/PlexAniListSync/compare/v3.2.0...v3.2.1) (2024-11-04)
+
+
+### Bug Fixes
+
+* " in title would cause malformed graphql query ([02904c5](https://github.com/Faustvii/PlexAniListSync/commit/02904c57730fa9f9a8fd3fef032c27bb2d5ad6ab))
+
 # [3.2.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.1.4...v3.2.0) (2024-03-31)
 
 
