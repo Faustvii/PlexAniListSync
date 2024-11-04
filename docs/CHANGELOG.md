@@ -1,3 +1,10 @@
+## [3.2.2](https://github.com/Faustvii/PlexAniListSync/compare/v3.2.1...v3.2.2) (2024-11-04)
+
+
+### Bug Fixes
+
+* exclude not yet released from being retrieved by search ([5f53d15](https://github.com/Faustvii/PlexAniListSync/commit/5f53d15955625383d942ede8a3d35960f06f2c52))
+
 ## [3.2.1](https://github.com/Faustvii/PlexAniListSync/compare/v3.2.0...v3.2.1) (2024-11-04)
 
 
