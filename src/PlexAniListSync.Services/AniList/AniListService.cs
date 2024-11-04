@@ -69,8 +69,14 @@ public class AniListService : IAniListService
             .Replace("'", string.Empty, StringComparison.OrdinalIgnoreCase);
     }
 
+    private static string RemoveCharactersThatRequiresEscaping(string title)
+    {
+        return title.Replace("\"", string.Empty, StringComparison.OrdinalIgnoreCase);
+    }
+
     private async Task<AniPagination<Media>> QueryForShowAsync(string title, int season, int level = 1)
     {
+        title = RemoveCharactersThatRequiresEscaping(title);
         var query = level switch
         {
             1 => $"{title} season {season.ToStringInvariantCulture()}",
@@ -146,7 +152,7 @@ public class AniListService : IAniListService
             }
         }
 
-        var mutation = new AniListNet.Parameters.MediaEntryMutation(mediaEntry)
+        var mutation = new AniListNet.Parameters.MediaEntryMutation()
         {
             Progress = episode,
             Status = status,
