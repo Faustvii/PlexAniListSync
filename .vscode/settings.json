@@ -11,11 +11,11 @@
     "**/bin": true,
     "**/obj": true
   },
-  "omnisharp.enableImportCompletion": true,
   "omnisharp.enableRoslynAnalyzers": true,
   "omnisharp.enableEditorConfigSupport": true,
   "editor.formatOnSave": true,
   "[csharp]": {
     "editor.defaultFormatter": "csharpier.csharpier-vscode"
-  }
+  },
+  "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true
 }

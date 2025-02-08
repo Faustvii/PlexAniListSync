@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using PlexAniListSync.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddJsonFile("config/appsettings.json", optional: true, reloadOnChange: true);
 
 // Add services to the container.
 
