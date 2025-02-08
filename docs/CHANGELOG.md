@@ -1,3 +1,10 @@
+# [3.3.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.2.2...v3.3.0) (2025-02-08)
+
+
+### Features
+
+* add loading config from config folder ([b37c923](https://github.com/Faustvii/PlexAniListSync/commit/b37c92339ee8e5bd9cf08dd0847b3ef3f7ed0565))
+
 ## [3.2.2](https://github.com/Faustvii/PlexAniListSync/compare/v3.2.1...v3.2.2) (2024-11-04)
 
 
