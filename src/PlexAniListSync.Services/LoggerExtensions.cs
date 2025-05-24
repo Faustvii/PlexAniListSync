@@ -111,7 +111,7 @@ internal static class LoggerExtensions
         );
 
         LogOnlyOneShowMatchedExactTitleAction = LoggerMessage.Define<string, string>(
-            logLevel: LogLevel.Error,
+            logLevel: LogLevel.Information,
             eventId: 16,
             formatString: "We managed to find only one exact match from '{PossibleShows}' with '{Title}'"
         );

@@ -24,21 +24,32 @@ public class AniListService : IAniListService
 
     public async Task<int?> FindShowAsync(string title, int season)
     {
-        var media = await QueryForShowAsync(title, season);
-        if (media.Data.Length != 1)
+        var mediaPage = await QueryForShowAsync(title, season);
+        if (mediaPage.Data.Length != 1)
         {
-            _logger.LogUnexpectedAmoutOfShows(media.Data.Length);
-            if (media.Data.Where(x => TitleMatchesExactlyIgnoreCase(x, title)).Take(2).Count() == 1)
+            _logger.LogUnexpectedAmoutOfShows(mediaPage.Data.Length);
+            var exactMatch = RetrieveExactMatchMedia(title, mediaPage);
+            if (exactMatch is not null)
             {
-                _logger.LogOnlyOneShowMatchedExactTitle(title, media.Data.Select(x => x.Title.PreferredTitle));
-                return media.Data.SingleOrDefault(x => TitleMatchesExactlyIgnoreCase(x, title))?.Id;
+                _logger.LogOnlyOneShowMatchedExactTitle(title, mediaPage.Data.Select(x => x.Title.PreferredTitle));
+                return exactMatch.Id;
             }
 
             return null;
         }
 
-        var id = media.Data[0].Id;
+        var id = mediaPage.Data[0].Id;
         return id;
+    }
+
+    private Media? RetrieveExactMatchMedia(string title, AniPagination<Media> media)
+    {
+        if (media.Data.Where(x => TitleMatchesExactlyIgnoreCase(x, title)).Take(2).Count() == 1)
+        {
+            return media.Data.SingleOrDefault(x => TitleMatchesExactlyIgnoreCase(x, title));
+        }
+
+        return null;
     }
 
     private static bool TitleMatchesExactlyIgnoreCase(Media media, string title)
@@ -79,9 +90,9 @@ public class AniListService : IAniListService
         title = RemoveCharactersThatRequiresEscaping(title);
         var query = level switch
         {
-            1 => $"{title} season {season.ToStringInvariantCulture()}",
-            2 => $"{title} {season.ToStringInvariantCulture()}",
-            3 => title,
+            1 => title,
+            2 => $"{title} season {season.ToStringInvariantCulture()}",
+            3 => $"{title} {season.ToStringInvariantCulture()}",
             _ => title
         };
 
@@ -99,14 +110,23 @@ public class AniListService : IAniListService
             Query = query,
         };
 
-        var media = await _client.SearchMediaAsync(filter);
-        if (media.Data.Length != 1 && level < 3)
+        var mediaPage = await _client.SearchMediaAsync(filter);
+        if (mediaPage.Data.Length != 1)
+        {
+            // Let's see if only one show matches the exact title, if so, we can return it
+            var exactMatch = RetrieveExactMatchMedia(title, mediaPage);
+            if (exactMatch is not null)
+            {
+                return mediaPage;
+            }
+        }
+        if (mediaPage.Data.Length != 1 && level < 3)
         {
             _logger.LogNoShowFound(filter.Query);
-            media = await QueryForShowAsync(title, season, level + 1);
+            mediaPage = await QueryForShowAsync(title, season, level + 1);
         }
 
-        return media;
+        return mediaPage;
     }
 
     public async Task UpdateShowAsync(string plexUsername, int anilistId, int episode)
