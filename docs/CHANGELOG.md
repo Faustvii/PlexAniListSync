@@ -1,3 +1,10 @@
+## [3.3.1](https://github.com/Faustvii/PlexAniListSync/compare/v3.3.0...v3.3.1) (2025-05-24)
+
+
+### Bug Fixes
+
+* fixed issue with improper show matching ([15d88e7](https://github.com/Faustvii/PlexAniListSync/commit/15d88e78314f42597cebcd66e050b162c71c061f))
+
 # [3.3.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.2.2...v3.3.0) (2025-02-08)
 
 
