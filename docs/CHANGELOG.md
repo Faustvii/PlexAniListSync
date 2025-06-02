@@ -1,3 +1,10 @@
+## [3.4.1](https://github.com/Faustvii/PlexAniListSync/compare/v3.4.0...v3.4.1) (2025-06-02)
+
+
+### Bug Fixes
+
+* movie media type not getting marked as completed ([c184d0f](https://github.com/Faustvii/PlexAniListSync/commit/c184d0f0dd2671b9077cac4fd7afe7b056c4dd5d))
+
 # [3.4.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.3.1...v3.4.0) (2025-06-02)
 
 
