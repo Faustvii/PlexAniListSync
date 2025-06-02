@@ -23,10 +23,7 @@ public class EpisodeRuleParser : IEpisodeRuleParser
         var mappingSections = rawEpisodeMapping.Split("->");
         if (mappingSections.Length != 2)
         {
-            throw new ArgumentException(
-                $"We were unable to parse '{rawEpisodeMapping}'",
-                nameof(rawEpisodeMapping)
-            );
+            throw new ArgumentException($"We were unable to parse '{rawEpisodeMapping}'", nameof(rawEpisodeMapping));
         }
 
         var from = ParseRule(mappingSections[0]);
@@ -39,10 +36,7 @@ public class EpisodeRuleParser : IEpisodeRuleParser
         var sections = ruleSection.Split(':');
         if (sections.Length != 2)
         {
-            throw new ArgumentException(
-                $"Could not parse sections from '{ruleSection}'",
-                nameof(ruleSection)
-            );
+            throw new ArgumentException($"Could not parse sections from '{ruleSection}'", nameof(ruleSection));
         }
 
         var ids = sections[0].Split('|');
@@ -71,9 +65,7 @@ public class EpisodeRuleParser : IEpisodeRuleParser
             var (startRange, _) = rangeSection[0].ToIntInvariantCulture();
             var (endRange, endRangeParsed) = rangeSection[1].ToIntInvariantCulture();
 
-            episodeRange = Enumerable
-                .Range(startRange, endRangeParsed ? endRange - startRange + 1 : 1)
-                .ToArray();
+            episodeRange = Enumerable.Range(startRange, endRangeParsed ? endRange - startRange + 1 : 1).ToArray();
         }
         else
         {

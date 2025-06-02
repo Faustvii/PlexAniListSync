@@ -42,6 +42,26 @@ public class AniListService : IAniListService
         return id;
     }
 
+    public async Task<int?> FindMovieAsync(string title)
+    {
+        var mediaPage = await QueryForMovieAsync(title);
+        if (mediaPage.Data.Length != 1)
+        {
+            _logger.LogUnexpectedAmoutOfShows(mediaPage.Data.Length);
+            var exactMatch = RetrieveExactMatchMedia(title, mediaPage);
+            if (exactMatch is not null)
+            {
+                _logger.LogOnlyOneShowMatchedExactTitle(title, mediaPage.Data.Select(x => x.Title.PreferredTitle));
+                return exactMatch.Id;
+            }
+
+            return null;
+        }
+
+        var id = mediaPage.Data[0].Id;
+        return id;
+    }
+
     private Media? RetrieveExactMatchMedia(string title, AniPagination<Media> media)
     {
         if (media.Data.Where(x => TitleMatchesExactlyIgnoreCase(x, title)).Take(2).Count() == 1)
@@ -124,6 +144,44 @@ public class AniListService : IAniListService
         {
             _logger.LogNoShowFound(filter.Query);
             mediaPage = await QueryForShowAsync(title, season, level + 1);
+        }
+
+        return mediaPage;
+    }
+
+    private async Task<AniPagination<Media>> QueryForMovieAsync(string title, int level = 1)
+    {
+        title = RemoveCharactersThatRequiresEscaping(title);
+        var query = title;
+        var format = level switch
+        {
+            1 => MediaFormat.Movie,
+            2 => MediaFormat.Special,
+            _ => MediaFormat.Movie
+        };
+
+        var filter = new AniListNet.Parameters.SearchMediaFilter
+        {
+            Type = MediaType.Anime,
+            Format = new Dictionary<MediaFormat, bool> { { format, true } },
+            Status = new Dictionary<MediaStatus, bool> { { MediaStatus.NotYetReleased, false }, },
+            Query = query,
+        };
+
+        var mediaPage = await _client.SearchMediaAsync(filter);
+        if (mediaPage.Data.Length != 1)
+        {
+            // Let's see if only one show matches the exact title, if so, we can return it
+            var exactMatch = RetrieveExactMatchMedia(title, mediaPage);
+            if (exactMatch is not null)
+            {
+                return mediaPage;
+            }
+        }
+        if (mediaPage.Data.Length != 1 && level < 2)
+        {
+            _logger.LogNoShowFound(filter.Query);
+            mediaPage = await QueryForMovieAsync(title, level + 1);
         }
 
         return mediaPage;

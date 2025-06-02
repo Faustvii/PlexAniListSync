@@ -24,10 +24,7 @@ namespace PlexAniListSync.Services;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddPlex(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
+    public static IServiceCollection AddPlex(this IServiceCollection services, IConfiguration configuration)
     {
         var apiOptions = new ClientOptions
         {
@@ -52,10 +49,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddAnilist(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
+    public static IServiceCollection AddAnilist(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<AniListOptions>(configuration.GetSection(AniListOptions.Key));
         services.AddSingleton<AniClient>();
@@ -81,10 +75,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddHostedServices(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
+    public static IServiceCollection AddHostedServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<SourceOptions>(configuration.GetSection(SourceOptions.Key));
         services.AddHostedService<PeriodicDownloaderService>();

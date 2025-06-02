@@ -6,12 +6,7 @@ public static class CultureExtensions
 {
     public static (int result, bool parseResult) ToIntInvariantCulture(this string me)
     {
-        var parseResult = int.TryParse(
-            me,
-            NumberStyles.Integer,
-            CultureInfo.InvariantCulture,
-            out var result
-        );
+        var parseResult = int.TryParse(me, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result);
         return (result, parseResult);
     }
 

@@ -29,14 +29,22 @@ public class WebhookService : IWebhookService
         if (anilistId is default(int))
         {
             _logger.LogUnableToGetAnilistIdFromMappings(data.ShowTitle, data.Season);
-            anilistId = (await _aniListService.FindShowAsync(data.ShowTitle, data.Season)).GetValueOrDefault();
+            anilistId = data.Type switch
+            {
+                MediaType.Movie => (await _aniListService.FindMovieAsync(data.ShowTitle)).GetValueOrDefault(),
+                _ => (await _aniListService.FindShowAsync(data.ShowTitle, data.Season)).GetValueOrDefault()
+            };
             if (anilistId is default(int))
             {
                 _logger.LogUnableToGetAnilistIdError(data.ShowTitle, data.Season);
                 return false;
             }
         }
-        var anilistEpisodeNumber = _mappingService.GetEpisodeNumber(data.Episode, anilistId);
+        var anilistEpisodeNumber = data.Type switch
+        {
+            MediaType.Movie => 1,
+            _ => _mappingService.GetEpisodeNumber(data.Episode, anilistId)
+        };
 
         await _aniListService.UpdateShowAsync(data.User, anilistId, anilistEpisodeNumber);
         return true;

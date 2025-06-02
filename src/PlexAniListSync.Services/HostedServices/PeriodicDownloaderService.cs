@@ -68,9 +68,7 @@ public sealed class PeriodicDownloaderService : IHostedService, IAsyncDisposable
         }
     }
 
-    private async Task<IReadOnlyList<EpisodeRuleMapping>> GetEpisodeRuleMappingsAsync(
-        string[] sourceUrls
-    )
+    private async Task<IReadOnlyList<EpisodeRuleMapping>> GetEpisodeRuleMappingsAsync(string[] sourceUrls)
     {
         var episodeRuleMappings = new List<EpisodeRuleMapping>();
         foreach (var sourceUrl in sourceUrls)
