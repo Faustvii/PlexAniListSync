@@ -1,3 +1,10 @@
+# [3.4.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.3.1...v3.4.0) (2025-06-02)
+
+
+### Features
+
+* added support for movies ([1417e8a](https://github.com/Faustvii/PlexAniListSync/commit/1417e8a582e562d87837549c48b288b41f41806e))
+
 ## [3.3.1](https://github.com/Faustvii/PlexAniListSync/compare/v3.3.0...v3.3.1) (2025-05-24)
 
 
