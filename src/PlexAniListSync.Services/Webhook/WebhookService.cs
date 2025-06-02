@@ -46,7 +46,7 @@ public class WebhookService : IWebhookService
             _ => _mappingService.GetEpisodeNumber(data.Episode, anilistId)
         };
 
-        await _aniListService.UpdateShowAsync(data.User, anilistId, anilistEpisodeNumber);
+        await _aniListService.UpdateMediaAsync(data.User, anilistId, anilistEpisodeNumber, data.Type);
         return true;
     }
 }

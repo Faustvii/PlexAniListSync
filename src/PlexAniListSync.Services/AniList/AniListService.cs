@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PlexAniListSync.Models.AniList;
 using static PlexAniListSync.Models.AniList.AniListOptions;
+using MediaType = AniListNet.Objects.MediaType;
 
 namespace PlexAniListSync.Services.AniList;
 
@@ -187,7 +188,12 @@ public class AniListService : IAniListService
         return mediaPage;
     }
 
-    public async Task UpdateShowAsync(string plexUsername, int anilistId, int episode)
+    public async Task UpdateMediaAsync(
+        string plexUsername,
+        int anilistId,
+        int episode,
+        Models.Webhook.MediaType mediaType
+    )
     {
         var users = _options.Value.Users.Where(
             x => x.PlexUsernames.Any(t => t.Equals(plexUsername, StringComparison.OrdinalIgnoreCase))
@@ -200,11 +206,16 @@ public class AniListService : IAniListService
 
         foreach (var user in users)
         {
-            await UpdateShowForAnilistUserAsync(user, anilistId, episode);
+            await UpdateMediaForAnilistUserAsync(user, anilistId, episode, mediaType);
         }
     }
 
-    private async Task UpdateShowForAnilistUserAsync(AniListUser user, int anilistId, int episode)
+    private async Task UpdateMediaForAnilistUserAsync(
+        AniListUser user,
+        int anilistId,
+        int episode,
+        Models.Webhook.MediaType mediaType
+    )
     {
         var authenticated = await _client.TryAuthenticateAsync(user.Token);
         if (authenticated is false)
@@ -213,9 +224,18 @@ public class AniListService : IAniListService
             return;
         }
 
-        var status = MediaEntryStatus.Current;
+        var status = mediaType switch
+        {
+            Models.Webhook.MediaType.Movie => MediaEntryStatus.Completed,
+            _ => MediaEntryStatus.Current,
+        };
+
         var mediaEntry = await _client.GetMediaEntryAsync(anilistId);
-        var completedDate = (DateTime?)null;
+        DateTime? completedDate = mediaType switch
+        {
+            Models.Webhook.MediaType.Movie => DateTime.UtcNow,
+            _ => null,
+        };
         var startDate = DateTime.UtcNow;
         if (mediaEntry is not null)
         {
