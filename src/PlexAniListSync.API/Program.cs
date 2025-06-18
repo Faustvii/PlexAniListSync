@@ -1,4 +1,7 @@
 using System.Text.Json.Serialization;
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 using PlexAniListSync.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +30,35 @@ builder.Services.AddHostedServices(builder.Configuration);
 builder.Services.AddMappingServices();
 builder.Services.AddParsers();
 builder.Services.AddDataCache();
+
+builder.Logging.AddOpenTelemetry(logging =>
+{
+    logging.IncludeFormattedMessage = true;
+    logging.IncludeScopes = true;
+});
+
+var otel = builder.Services.AddOpenTelemetry();
+
+otel.WithMetrics(metrics =>
+{
+    metrics.AddAspNetCoreInstrumentation();
+    metrics.AddHttpClientInstrumentation();
+
+    // Add any additional instrumentation you need
+    metrics.AddMeter("Microsoft.AspNetCore.Hosting", "Microsoft.AspNetCore.Server.Kestrel");
+});
+
+otel.WithTracing(tracing =>
+{
+    tracing.AddAspNetCoreInstrumentation();
+    tracing.AddHttpClientInstrumentation();
+});
+
+var OtlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+if (OtlpEndpoint != null)
+{
+    otel.UseOtlpExporter();
+}
 
 var app = builder.Build();
 
