@@ -72,3 +72,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 await app.RunAsync();
+
+public partial class Program { }
+// This partial class is used to allow the Program class to be used in tests
