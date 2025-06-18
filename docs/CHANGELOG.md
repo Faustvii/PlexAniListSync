@@ -1,3 +1,10 @@
+# [3.5.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.4.1...v3.5.0) (2025-06-18)
+
+
+### Features
+
+* add opentelemetry export ([c5d395d](https://github.com/Faustvii/PlexAniListSync/commit/c5d395d0d4ef630971a2a05effd5fc9da731584a))
+
 ## [3.4.1](https://github.com/Faustvii/PlexAniListSync/compare/v3.4.0...v3.4.1) (2025-06-02)
 
 
