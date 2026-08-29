@@ -40,9 +40,9 @@ public class WebhookService : IWebhookService
                 return false;
             }
         }
-        var anilistEpisodeNumber = data.Type switch
+        var (anilistEpisodeNumber, _) = data.Type switch
         {
-            MediaType.Movie => 1,
+            MediaType.Movie => (1, anilistId),
             _ => _mappingService.GetEpisodeNumber(data.Episode, anilistId)
         };
 

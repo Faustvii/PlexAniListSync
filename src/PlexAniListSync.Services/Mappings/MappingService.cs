@@ -32,26 +32,26 @@ public class MappingService : IMappingService
         return anime.Seasons.FirstOrDefault()?.AnilistId ?? 0;
     }
 
-    public int GetEpisodeNumber(int episode, int anilistId)
+    public (int episodeNumber, int anilistId) GetEpisodeNumber(int episode, int anilistId)
     {
         var episodeMappings = _cache.GetEpisodeRuleMappings();
 
         var episodeMapping = episodeMappings.FirstOrDefault(
-            x => x.To.AnilistId.Equals(anilistId.ToStringInvariantCulture(), StringComparison.OrdinalIgnoreCase)
+            x => x.From.AnilistId.Equals(anilistId.ToStringInvariantCulture(), StringComparison.OrdinalIgnoreCase)
         );
 
         if (episodeMapping == null)
         {
-            return episode;
+            return (episode, anilistId);
         }
 
         if (episodeMapping.To.EpisodeRange.Contains(episode))
         {
-            return episode;
+            return (episode, anilistId);
         }
 
         var episodeIndex = Array.IndexOf(episodeMapping.From.EpisodeRange, episode);
         var episodeNumber = episodeMapping.To.EpisodeRange[episodeIndex];
-        return episodeNumber;
+        return (episodeNumber, int.Parse(episodeMapping.To.AnilistId));
     }
 }

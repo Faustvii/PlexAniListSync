@@ -14,6 +14,7 @@ public class AniListTests
     [InlineData(108241, "Gleipnir", 1)]
     [InlineData(139587, "Tensei Shitara Ken Deshita", 1)]
     [InlineData(171018, "Dan Da Dan", 1)]
+    [InlineData(135865, "Saga of Tanya the Evil", 2)]
     public async Task CanRetrieveAniListIdByTitleOnAPI(int expectedId, string title, int season)
     {
         var anilistOptions = new AniListOptions

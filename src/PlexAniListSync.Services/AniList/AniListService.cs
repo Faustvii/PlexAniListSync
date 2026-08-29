@@ -29,7 +29,7 @@ public class AniListService : IAniListService
         if (mediaPage.Data.Length != 1)
         {
             _logger.LogUnexpectedAmoutOfShows(mediaPage.Data.Length);
-            var exactMatch = RetrieveExactMatchMedia(title, mediaPage);
+            var exactMatch = RetrieveExactMatchMedia(title, mediaPage, season);
             if (exactMatch is not null)
             {
                 _logger.LogOnlyOneShowMatchedExactTitle(title, mediaPage.Data.Select(x => x.Title.PreferredTitle));
@@ -63,30 +63,69 @@ public class AniListService : IAniListService
         return id;
     }
 
-    private Media? RetrieveExactMatchMedia(string title, AniPagination<Media> media)
+    private Media? RetrieveExactMatchMedia(string title, AniPagination<Media> media, int season = 1)
     {
-        if (media.Data.Where(x => TitleMatchesExactlyIgnoreCase(x, title)).Take(2).Count() == 1)
+        if (media.Data.Where(x => TitleMatchesExactlyIgnoreCase(x, title, season)).Take(2).Count() == 1)
         {
-            return media.Data.SingleOrDefault(x => TitleMatchesExactlyIgnoreCase(x, title));
+            return media.Data.SingleOrDefault(x => TitleMatchesExactlyIgnoreCase(x, title, season));
         }
 
         return null;
     }
 
-    private static bool TitleMatchesExactlyIgnoreCase(Media media, string title)
+    private static bool TitleMatchesExactlyIgnoreCase(Media media, string title, int season = 1)
     {
         var safeTitle = RemoveAnnoyingCharacters(title);
-        return safeTitle.Equals(RemoveAnnoyingCharacters(media.Title.EnglishTitle), StringComparison.OrdinalIgnoreCase)
-            || safeTitle.Equals(RemoveAnnoyingCharacters(media.Title.RomajiTitle), StringComparison.OrdinalIgnoreCase)
-            || safeTitle.Equals(
-                RemoveAnnoyingCharacters(media.Title.PreferredTitle),
-                StringComparison.OrdinalIgnoreCase
-            )
-            || safeTitle.Equals(RemoveAnnoyingCharacters(media.Title.RomajiTitle), StringComparison.OrdinalIgnoreCase)
-            || media.Synonyms.Any(
-                x => safeTitle.Equals(RemoveAnnoyingCharacters(x), StringComparison.OrdinalIgnoreCase)
-            );
+        var candidates = BuildSeasonTitleCandidates(safeTitle, season);
+
+        bool MatchesAny(string? mediaTitle) =>
+            mediaTitle is not null
+            && candidates.Contains(RemoveAnnoyingCharacters(mediaTitle), StringComparer.OrdinalIgnoreCase);
+
+        return MatchesAny(media.Title.EnglishTitle)
+            || MatchesAny(media.Title.RomajiTitle)
+            || MatchesAny(media.Title.PreferredTitle)
+            || media.Synonyms.Any(MatchesAny);
     }
+
+    // AniList has no sequel-index field, so for season > 1 we only accept titles carrying a
+    // sequel marker ("Season 2", "II", ...) - a bare title match would just be the first season.
+    private static IReadOnlyCollection<string> BuildSeasonTitleCandidates(string title, int season)
+    {
+        if (season <= 1)
+            return new[] { title };
+
+        var seasonText = season.ToStringInvariantCulture();
+        return new[]
+        {
+            $"{title} {seasonText}",
+            $"{title} Season {seasonText}",
+            $"{title} Part {seasonText}",
+            $"{title} {ToOrdinal(season)} Season",
+            $"{title} {ToRomanNumeral(season)}",
+        };
+    }
+
+    private static string ToOrdinal(int number) =>
+        (number % 100) switch
+        {
+            11 or 12 or 13 => $"{number}th",
+            _ => (number % 10) switch
+            {
+                1 => $"{number}st",
+                2 => $"{number}nd",
+                3 => $"{number}rd",
+                _ => $"{number}th"
+            }
+        };
+
+    private static readonly string[] RomanNumerals =
+    {
+        "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"
+    };
+
+    private static string ToRomanNumeral(int number) =>
+        number >= 1 && number <= RomanNumerals.Length ? RomanNumerals[number - 1] : number.ToStringInvariantCulture();
 
     [return: NotNullIfNotNull("title")]
     private static string? RemoveAnnoyingCharacters(string? title)
@@ -135,7 +174,7 @@ public class AniListService : IAniListService
         if (mediaPage.Data.Length != 1)
         {
             // Let's see if only one show matches the exact title, if so, we can return it
-            var exactMatch = RetrieveExactMatchMedia(title, mediaPage);
+            var exactMatch = RetrieveExactMatchMedia(title, mediaPage, season);
             if (exactMatch is not null)
             {
                 return mediaPage;

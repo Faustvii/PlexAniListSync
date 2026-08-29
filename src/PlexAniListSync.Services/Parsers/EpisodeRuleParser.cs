@@ -17,7 +17,28 @@ public class EpisodeRuleParser : IEpisodeRuleParser
 
         return episodeMappings;
     }
-
+// # This file includes anime relation data for Taiga. It is used to redirect an
+// # episode to another, which is required to handle special episodes and the case
+// # where fansub groups use continuous numbering scheme in their releases.
+// #
+// # Rules are sorted alphabetically by anime title. Rule syntax is:
+// #
+// #   10001|10002|10003:14-26 -> 20001|20002|20003:1-13!
+// #   └─┬─┘ └─┬─┘ └─┬─┘ └─┬─┘    └─┬─┘ └─┬─┘ └─┬─┘ └─┬─┘
+// #     1     2     3     4        1     2     3     4
+// #
+// #   (1) MyAnimeList ID
+// #       <https://myanimelist.net/anime/{id}/{title}>
+// #   (2) Kitsu ID
+// #       <https://kitsu.io/api/edge/anime?filter[text]={title}>
+// #   (3) AniList ID
+// #       <https://anilist.co/anime/{id}/{title}>
+// #   (4) Episode number or range
+// #
+// #   - "?" is used for unknown values.
+// #   - "~" is used to repeat the source ID.
+// #   - "!" suffix is shorthand for creating a new rule where destination ID is
+// #     redirected to itself.
     private static EpisodeRuleMapping ParseEpisodeRuleMapping(string rawEpisodeMapping)
     {
         var mappingSections = rawEpisodeMapping.Split("->");
