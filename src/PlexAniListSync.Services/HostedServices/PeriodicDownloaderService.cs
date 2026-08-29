@@ -17,6 +17,8 @@ public sealed class PeriodicDownloaderService : IHostedService, IAsyncDisposable
     private readonly IAnilistTVParser _anilistTVParser;
     private readonly IOptions<SourceOptions> _optionsAccessor;
     private Timer? _timer;
+    private CancellationTokenSource? _stoppingCts;
+    private Task? _executingTask;
 
     public PeriodicDownloaderService(
         ILogger<PeriodicDownloaderService> logger,
@@ -38,8 +40,9 @@ public sealed class PeriodicDownloaderService : IHostedService, IAsyncDisposable
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogHostedServiceStarting(nameof(PeriodicDownloaderService));
+        _stoppingCts = new CancellationTokenSource();
         _timer = new Timer(
-            DoWork,
+            TimerCallback,
             state: null,
             TimeSpan.Zero,
             TimeSpan.FromHours(_optionsAccessor.Value.CheckForUpdateEveryHours)
@@ -47,20 +50,29 @@ public sealed class PeriodicDownloaderService : IHostedService, IAsyncDisposable
         return Task.CompletedTask;
     }
 
-    // We need async void because of Timer expecting void callback
-#pragma warning disable VSTHRD100, AsyncFixer03
-    private async void DoWork(object? state)
-#pragma warning restore VSTHRD100, AsyncFixer03
+    // We need void because Timer expects a void callback
+    private void TimerCallback(object? state)
+    {
+        _executingTask = DoWorkAsync(_stoppingCts!.Token);
+    }
+
+    private async Task DoWorkAsync(CancellationToken cancellationToken)
     {
         try
         {
             var options = _optionsAccessor.Value;
 
             var episodeRuleMappings = await GetEpisodeRuleMappingsAsync(options.EpisodeRuleUrls);
+            cancellationToken.ThrowIfCancellationRequested();
             _cache.SetEpisodeRuleMappings(episodeRuleMappings);
 
             var anilistMappings = await GetAnilistMappingsAsync(options.AnilistMappingUrls);
+            cancellationToken.ThrowIfCancellationRequested();
             _cache.SetAnilistMappings(anilistMappings);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            // Shutting down, discard the in-flight result instead of writing to a disposed cache.
         }
         catch (Exception ex)
         {
@@ -92,11 +104,20 @@ public sealed class PeriodicDownloaderService : IHostedService, IAsyncDisposable
         return anilistMappings;
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
         _logger.LogHostedServiceStopping(nameof(PeriodicDownloaderService));
         _timer?.Change(Timeout.Infinite, 0);
-        return Task.CompletedTask;
+        _stoppingCts?.Cancel();
+
+        // Wait for any in-flight download/cache-write to finish (or observe cancellation) before
+        // the host disposes the DI container - otherwise it can write to an already-disposed cache.
+        if (_executingTask is not null)
+        {
+#pragma warning disable VSTHRD003 // task was started by the timer callback, not this method
+            await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite, cancellationToken));
+#pragma warning restore VSTHRD003
+        }
     }
 
     public async ValueTask DisposeAsync()
@@ -107,5 +128,6 @@ public sealed class PeriodicDownloaderService : IHostedService, IAsyncDisposable
         }
 
         _timer = null;
+        _stoppingCts?.Dispose();
     }
 }

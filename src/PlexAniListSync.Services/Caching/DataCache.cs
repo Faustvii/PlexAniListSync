@@ -14,12 +14,13 @@ public class DataCache : IDataCache
 
     public IReadOnlyList<AnilistMapping> GetAnilistMapping()
     {
-        return _cache.Get<IReadOnlyList<AnilistMapping>>(Constants.AnimeMappingCacheKey);
+        return _cache.Get<IReadOnlyList<AnilistMapping>>(Constants.AnimeMappingCacheKey) ?? Array.Empty<AnilistMapping>();
     }
 
     public IReadOnlyList<EpisodeRuleMapping> GetEpisodeRuleMappings()
     {
-        return _cache.Get<IReadOnlyList<EpisodeRuleMapping>>(Constants.AnimeEpisodeMappingRulesCacheKey);
+        return _cache.Get<IReadOnlyList<EpisodeRuleMapping>>(Constants.AnimeEpisodeMappingRulesCacheKey)
+            ?? Array.Empty<EpisodeRuleMapping>();
     }
 
     public void SetAnilistMappings(IEnumerable<AnilistMapping> mappings)
