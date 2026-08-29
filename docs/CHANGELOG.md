@@ -1,3 +1,11 @@
+## [3.5.1](https://github.com/Faustvii/PlexAniListSync/compare/v3.5.0...v3.5.1) (2026-08-29)
+
+
+### Bug Fixes
+
+* **match:** incorrect season match for Tanya the evil ([160e928](https://github.com/Faustvii/PlexAniListSync/commit/160e92828100c08d0296ea037aa218ba3204c4d9))
+* **services:** stop periodic downloader race with disposed cache ([011c79e](https://github.com/Faustvii/PlexAniListSync/commit/011c79e2ff6cfdb2e22d877902982747681db008))
+
 # [3.5.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.4.1...v3.5.0) (2025-06-18)
 
 
