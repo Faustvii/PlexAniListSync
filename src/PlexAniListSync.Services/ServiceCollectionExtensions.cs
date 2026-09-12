@@ -7,6 +7,7 @@ using PlexAniListSync.Models.AniList;
 using PlexAniListSync.Models.Cache;
 using PlexAniListSync.Models.Mappings;
 using PlexAniListSync.Models.Plex;
+using PlexAniListSync.Models.RetryQueue;
 using PlexAniListSync.Services.AniList;
 using PlexAniListSync.Services.Caching;
 using PlexAniListSync.Services.Downloaders;
@@ -14,6 +15,7 @@ using PlexAniListSync.Services.Extractors;
 using PlexAniListSync.Services.HostedServices;
 using PlexAniListSync.Services.Mappings;
 using PlexAniListSync.Services.Parsers;
+using PlexAniListSync.Services.RetryQueue;
 using PlexAniListSync.Services.Webhook;
 using PlexAniListSync.AniListNet;
 
@@ -39,6 +41,26 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddWebhooks(this IServiceCollection services)
     {
         services.AddTransient<IWebhookService, WebhookService>();
+        return services;
+    }
+
+    public static IServiceCollection AddRetryQueue(this IServiceCollection services, IConfiguration configuration)
+    {
+        var options = configuration.GetSection(RetryQueueOptions.Key).Get<RetryQueueOptions>() ?? new RetryQueueOptions();
+        services.Configure<RetryQueueOptions>(configuration.GetSection(RetryQueueOptions.Key));
+
+        services.AddSingleton<IRateLimitGate, RateLimitGate>();
+
+        if (options.Enabled)
+        {
+            services.AddSingleton<IMutationRetryQueue, FusionCacheMutationRetryQueue>();
+            services.AddHostedService<MutationRetryDrainService>();
+        }
+        else
+        {
+            services.AddSingleton<IMutationRetryQueue, NoOpMutationRetryQueue>();
+        }
+
         return services;
     }
 
@@ -84,7 +106,6 @@ public static class ServiceCollectionExtensions
             .WithDefaultEntryOptions(options =>
             {
                 options.Duration = TimeSpan.FromHours(cacheOptions.LookupTtlHours);
-                // Serve a stale value if AniList is down / rate-limiting rather than failing the webhook.
                 options.IsFailSafeEnabled = true;
                 options.FailSafeMaxDuration = TimeSpan.FromDays(7);
                 options.FactorySoftTimeout = TimeSpan.FromSeconds(10);
@@ -110,7 +131,6 @@ public static class ServiceCollectionExtensions
                 break;
             case CacheBackend.Memory:
             default:
-                // L1 only - no persistent backend.
                 break;
         }
 

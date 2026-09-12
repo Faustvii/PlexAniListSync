@@ -158,4 +158,58 @@ public class APITests
                 ItExpr.IsAny<CancellationToken>()
             );
     }
+
+    [Fact]
+    public async Task WhenAniListRateLimits_WebhookIsAcceptedForRetry()
+    {
+        var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+        handlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
+            )
+            .ReturnsAsync(
+                () =>
+                {
+                    var response = new HttpResponseMessage
+                    {
+                        StatusCode = System.Net.HttpStatusCode.TooManyRequests,
+                        Content = new StringContent("<!DOCTYPE html><html><body>429</body></html>"),
+                    };
+                    response.Headers.TryAddWithoutValidation("Retry-After", "30");
+                    return response;
+                }
+            );
+
+        var aniClient = new AniClient(new HttpClient(handlerMock.Object));
+
+        await using var appFactory = new CustomWebApplicationFactory<Program>(services =>
+        {
+            var originalClient = services.SingleOrDefault(service => service.ServiceType == typeof(AniClient));
+            if (originalClient != null)
+                services.Remove(originalClient);
+            services.AddSingleton(aniClient);
+        });
+
+        var client = appFactory.CreateClient();
+
+        var webhookData = new WebhookData
+        {
+            Episode = 1,
+            Season = 1,
+            ShowTitle = "Gleipnir",
+            User = "myFirstUser",
+            Type = MediaType.Show,
+            PlexGuid = "plex://show/12345",
+            EpisodeRatingKey = "plex://episode/67890",
+            SeasonRatingKey = "plex://season/54321",
+            ShowRatingKey = "plex://show/12345"
+        };
+
+        var response = await client.PostAsJsonAsync("/Webhook", webhookData);
+
+        Assert.Equal(System.Net.HttpStatusCode.Accepted, response.StatusCode);
+    }
 }
