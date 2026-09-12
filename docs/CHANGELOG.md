@@ -1,3 +1,11 @@
+## [3.5.2](https://github.com/Faustvii/PlexAniListSync/compare/v3.5.1...v3.5.2) (2026-09-12)
+
+
+### Bug Fixes
+
+* **ci:** snyk and hadolint to workflow v3 ([c54c040](https://github.com/Faustvii/PlexAniListSync/commit/c54c040ef3e325a786f0e6c4851c88ba0986524b))
+* **deps:** upgrade to .NET 10 and refresh packages ([dcef64f](https://github.com/Faustvii/PlexAniListSync/commit/dcef64fc417585d853c425efa480e7428775ce85))
+
 ## [3.5.1](https://github.com/Faustvii/PlexAniListSync/compare/v3.5.0...v3.5.1) (2026-08-29)
 
 
