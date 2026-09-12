@@ -1,6 +1,6 @@
-using AniListNet;
-using AniListNet.Objects;
-using AniListNet.Parameters;
+using PlexAniListSync.AniListNet;
+using PlexAniListSync.AniListNet.Objects;
+using PlexAniListSync.AniListNet.Parameters;
 
 namespace PlexAniListSync.Services.AniList;
 

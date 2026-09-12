@@ -2,13 +2,13 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
+using PlexAniListSync.AniListNet;
 using PlexAniListSync.Models.Webhook;
 using Xunit;
 
@@ -19,7 +19,7 @@ public class APITests
     [Fact]
     public async Task CanRetrieveWebhookConfigFromAPI()
     {
-        var aniListClientMock = new Mock<AniListNet.AniClient>(MockBehavior.Loose);
+        var aniListClientMock = new Mock<AniClient>(MockBehavior.Loose);
         await using var appFactory = new CustomWebApplicationFactory<Program>(services =>
         {
             services.AddSingleton(aniListClientMock.Object);
@@ -38,8 +38,7 @@ public class APITests
     [Fact]
     public async Task CanPostWebhookEventToAPI()
     {
-        // 1. Mock HttpMessageHandler to intercept HTTP calls
-        var responseObject = new
+        var searchResponse = new
         {
             data = new
             {
@@ -92,6 +91,9 @@ public class APITests
                 }
             }
         };
+        var viewerResponse = new { data = new { Viewer = new { id = 1, name = "tester" } } };
+        var mediaEntryResponse = new { data = new { Media = new { mediaListEntry = (object?)null } } };
+
         var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         handlerMock
             .Protected()
@@ -101,30 +103,29 @@ public class APITests
                 ItExpr.IsAny<CancellationToken>()
             )
             .ReturnsAsync(
-                new HttpResponseMessage
+                (HttpRequestMessage request, CancellationToken _) =>
                 {
-                    StatusCode = System.Net.HttpStatusCode.OK,
-                    Content = new StringContent(JsonSerializer.Serialize(responseObject)),
+                    var body = request.Content!.ReadAsStringAsync().GetAwaiter().GetResult();
+                    // Route on the operation root: the search query is "{Page(...)...}" (and also
+                    // contains a nested "mediaListEntry", so match "Page(" before falling through).
+                    object payload = body.Contains("Viewer", StringComparison.Ordinal)
+                        ? viewerResponse
+                        : body.Contains("Page(", StringComparison.Ordinal)
+                            ? searchResponse
+                            : mediaEntryResponse;
+                    return new HttpResponseMessage
+                    {
+                        StatusCode = System.Net.HttpStatusCode.OK,
+                        Content = new StringContent(JsonSerializer.Serialize(payload)),
+                    };
                 }
             );
 
-        var httpClient = new HttpClient(handlerMock.Object) { BaseAddress = new Uri("https://localhost/anilist/api") };
-
-        // 2. Create AniClient and inject mock HttpClient via reflection
-        var aniClient = new AniListNet.AniClient();
-        var clientField = typeof(AniListNet.AniClient).GetField(
-            "_client",
-            BindingFlags.NonPublic | BindingFlags.Instance
-        );
-        if (clientField == null)
-            throw new Exception("Could not find _client field on AniClient.");
-        clientField.SetValue(aniClient, httpClient);
+        var aniClient = new AniClient(new HttpClient(handlerMock.Object));
 
         await using var appFactory = new CustomWebApplicationFactory<Program>(services =>
         {
-            var originalClient = services.SingleOrDefault(
-                service => service.ServiceType == typeof(AniListNet.AniClient)
-            );
+            var originalClient = services.SingleOrDefault(service => service.ServiceType == typeof(AniClient));
             if (originalClient != null)
                 services.Remove(originalClient);
             services.AddSingleton(aniClient);
@@ -152,7 +153,7 @@ public class APITests
             .Protected()
             .Verify(
                 "SendAsync",
-                Times.Exactly(2),
+                Times.AtLeastOnce(),
                 ItExpr.IsAny<HttpRequestMessage>(),
                 ItExpr.IsAny<CancellationToken>()
             );

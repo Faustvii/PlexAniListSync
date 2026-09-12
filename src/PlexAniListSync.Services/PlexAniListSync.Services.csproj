@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PlexAniListSync.Models\PlexAniListSync.Models.csproj" />
+    <ProjectReference Include="..\PlexAniListSync.AniListNet\PlexAniListSync.AniListNet.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -9,7 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AniListNet" Version="1.7.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.12" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.12" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />

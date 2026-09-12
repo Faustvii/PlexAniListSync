@@ -15,7 +15,7 @@ using PlexAniListSync.Services.HostedServices;
 using PlexAniListSync.Services.Mappings;
 using PlexAniListSync.Services.Parsers;
 using PlexAniListSync.Services.Webhook;
-using AniListNet;
+using PlexAniListSync.AniListNet;
 
 namespace PlexAniListSync.Services;
 
@@ -30,7 +30,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddAnilist(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<AniListOptions>(configuration.GetSection(AniListOptions.Key));
-        services.AddSingleton<AniClient>();
+        services.AddHttpClient<AniClient>();
         services.AddSingleton<IAniClient, AniClientWrapper>();
         services.AddTransient<IAniListService, AniListService>();
         return services;
