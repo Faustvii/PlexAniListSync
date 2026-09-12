@@ -1,19 +1,29 @@
 using AniListNet;
 using AniListNet.Objects;
 using AniListNet.Parameters;
+using Microsoft.Extensions.Logging;
 
 namespace PlexAniListSync.Services.AniList;
 
 /// <summary>
 /// Default <see cref="IAniClient"/> that forwards to the real <see cref="AniClient"/>.
+/// Registered as a singleton, so it owns the (single) rate-limit log subscription.
 /// </summary>
 public class AniClientWrapper : IAniClient
 {
     private readonly AniClient _client;
+    private readonly ILogger<AniClientWrapper> _logger;
 
-    public AniClientWrapper(AniClient client)
+    public AniClientWrapper(AniClient client, ILogger<AniClientWrapper> logger)
     {
         _client = client;
+        _logger = logger;
+        _client.RateChanged += RateLimitHandler;
+    }
+
+    private void RateLimitHandler(object? sender, AniRateEventArgs eventArgs)
+    {
+        _logger.LogAnilistRatelimit(eventArgs.RateRemaining);
     }
 
     public event EventHandler<AniRateEventArgs>? RateChanged

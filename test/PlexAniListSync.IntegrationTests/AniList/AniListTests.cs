@@ -29,7 +29,7 @@ public class AniListTests
         };
         var options = Options.Create(anilistOptions);
         var logger = Mock.Of<ILogger<AniListService>>();
-        var client = new AniClientWrapper(new AniListNet.AniClient());
+        var client = new AniClientWrapper(new AniListNet.AniClient(), Mock.Of<ILogger<AniClientWrapper>>());
         var cache = new FusionCache(Options.Create(new FusionCacheOptions()));
         var cacheOptions = Options.Create(new CacheOptions());
         var service = new AniListService(options, logger, client, cache, cacheOptions);
@@ -55,7 +55,7 @@ public class AniListTests
         };
         var options = Options.Create(anilistOptions);
         var logger = Mock.Of<ILogger<AniListService>>();
-        var client = new AniClientWrapper(new AniListNet.AniClient());
+        var client = new AniClientWrapper(new AniListNet.AniClient(), Mock.Of<ILogger<AniClientWrapper>>());
         var cache = new FusionCache(Options.Create(new FusionCacheOptions()));
         var cacheOptions = Options.Create(new CacheOptions());
         var service = new AniListService(options, logger, client, cache, cacheOptions);
