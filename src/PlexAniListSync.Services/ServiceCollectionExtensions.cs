@@ -18,11 +18,14 @@ using PlexAniListSync.Services.Parsers;
 using PlexAniListSync.Services.RetryQueue;
 using PlexAniListSync.Services.Webhook;
 using PlexAniListSync.AniListNet;
+using System.Text.Json;
 
 namespace PlexAniListSync.Services;
 
 public static class ServiceCollectionExtensions
 {
+    private static readonly JsonSerializerOptions CacheSerializerOptions = new() { IncludeFields = true };
+
     public static IServiceCollection AddPlex(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<PlexOptions>(configuration.GetSection(PlexOptions.Key));
@@ -120,13 +123,13 @@ public static class ServiceCollectionExtensions
                     Directory.CreateDirectory(directory);
                 services.AddSqliteCache(options => options.CachePath = sqlitePath);
                 fusionCache
-                    .WithSerializer(new FusionCacheSystemTextJsonSerializer())
+                    .WithSerializer(new FusionCacheSystemTextJsonSerializer(CacheSerializerOptions))
                     .WithRegisteredDistributedCache();
                 break;
             case CacheBackend.Redis:
                 services.AddStackExchangeRedisCache(options => options.Configuration = cacheOptions.RedisConnection);
                 fusionCache
-                    .WithSerializer(new FusionCacheSystemTextJsonSerializer())
+                    .WithSerializer(new FusionCacheSystemTextJsonSerializer(CacheSerializerOptions))
                     .WithRegisteredDistributedCache();
                 break;
             case CacheBackend.Memory:
