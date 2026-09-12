@@ -108,7 +108,10 @@ public sealed class PeriodicDownloaderService : IHostedService, IAsyncDisposable
     {
         _logger.LogHostedServiceStopping(nameof(PeriodicDownloaderService));
         _timer?.Change(Timeout.Infinite, 0);
-        _stoppingCts?.Cancel();
+        if (_stoppingCts is not null)
+        {
+            await _stoppingCts.CancelAsync();
+        }
 
         // Wait for any in-flight download/cache-write to finish (or observe cancellation) before
         // the host disposes the DI container - otherwise it can write to an already-disposed cache.

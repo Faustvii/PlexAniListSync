@@ -1,12 +1,5 @@
-using AniListNet;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Plex.Api.Factories;
-using Plex.Library.Factories;
-using Plex.ServerApi;
-using Plex.ServerApi.Api;
-using Plex.ServerApi.Clients;
-using Plex.ServerApi.Clients.Interfaces;
 using PlexAniListSync.Models.AniList;
 using PlexAniListSync.Models.Mappings;
 using PlexAniListSync.Models.Plex;
@@ -17,8 +10,8 @@ using PlexAniListSync.Services.Extractors;
 using PlexAniListSync.Services.HostedServices;
 using PlexAniListSync.Services.Mappings;
 using PlexAniListSync.Services.Parsers;
-using PlexAniListSync.Services.Plex;
 using PlexAniListSync.Services.Webhook;
+using AniListNet;
 
 namespace PlexAniListSync.Services;
 
@@ -26,25 +19,6 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddPlex(this IServiceCollection services, IConfiguration configuration)
     {
-        var apiOptions = new ClientOptions
-        {
-            Product = "Plex Anilist Sync Service",
-            DeviceName = "PlexAnilistSyncService",
-            ClientId = "PlexAnilistSyncService",
-            Platform = "Web",
-            Version = "v1"
-        };
-
-        // Setup Dependency Injection
-
-        services.AddSingleton(apiOptions);
-        services.AddTransient<IPlexServerClient, PlexServerClient>();
-        services.AddTransient<IPlexAccountClient, PlexAccountClient>();
-        services.AddTransient<IPlexLibraryClient, PlexLibraryClient>();
-        services.AddTransient<IApiService, ApiService>();
-        services.AddTransient<IPlexFactory, PlexFactory>();
-        services.AddTransient<IPlexRequestsHttpClient, PlexRequestsHttpClient>();
-        services.AddTransient<IPlexWatchedService, PlexWatchedService>();
         services.Configure<PlexOptions>(configuration.GetSection(PlexOptions.Key));
         return services;
     }
