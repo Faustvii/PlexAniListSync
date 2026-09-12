@@ -1,3 +1,15 @@
+# [3.6.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.5.2...v3.6.0) (2026-09-12)
+
+
+### Bug Fixes
+
+* **services:** stop leaking anilist rate-limit event handlers ([1d0b04c](https://github.com/Faustvii/PlexAniListSync/commit/1d0b04c0acf8c8d87c8d3a229c7285f1f3815b1b))
+
+
+### Features
+
+* **services:** cache anilist responses with fusioncache ([5ddabd2](https://github.com/Faustvii/PlexAniListSync/commit/5ddabd22f08045698373b9eab141d6edf262a3ab))
+
 ## [3.5.2](https://github.com/Faustvii/PlexAniListSync/compare/v3.5.1...v3.5.2) (2026-09-12)
 
 
