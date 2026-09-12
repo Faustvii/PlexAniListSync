@@ -37,7 +37,6 @@ public class AniListService : IAniListService
         _client = client;
         _cache = cache;
         _cacheOptions = cacheOptions.Value;
-        _client.RateChanged += RateLimitHandler;
     }
 
     public ValueTask<int?> FindShowAsync(string title, int season)
@@ -381,10 +380,5 @@ public class AniListService : IAniListService
         var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(token));
         var hash = Convert.ToHexString(bytes);
         return $"anilist:entry:{hash}:{anilistId.ToStringInvariantCulture()}";
-    }
-
-    private void RateLimitHandler(object? sender, AniRateEventArgs eventArgs)
-    {
-        _logger.LogAnilistRatelimit(eventArgs.RateRemaining);
     }
 }
