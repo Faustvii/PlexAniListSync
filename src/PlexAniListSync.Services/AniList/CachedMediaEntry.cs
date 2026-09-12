@@ -1,4 +1,4 @@
-using AniListNet.Objects;
+using PlexAniListSync.AniListNet.Objects;
 
 namespace PlexAniListSync.Services.AniList;
 

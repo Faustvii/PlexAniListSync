@@ -43,7 +43,7 @@ public class AniListServiceCachingTests
     {
         var client = new Mock<IAniClient>(MockBehavior.Strict);
         client.Setup(x => x.TryAuthenticateAsync(Token)).ReturnsAsync(true);
-        client.Setup(x => x.GetMediaEntryAsync(It.IsAny<int>())).ReturnsAsync((AniListNet.Objects.MediaEntry?)null);
+        client.Setup(x => x.GetMediaEntryAsync(It.IsAny<int>())).ReturnsAsync((PlexAniListSync.AniListNet.Objects.MediaEntry?)null);
         var service = BuildService(client.Object);
 
         await service.UpdateMediaAsync(PlexUser, anilistId: 187538, episode: 7, MediaType.Episode);
@@ -57,7 +57,7 @@ public class AniListServiceCachingTests
     {
         var client = new Mock<IAniClient>(MockBehavior.Strict);
         client.Setup(x => x.TryAuthenticateAsync(Token)).ReturnsAsync(true);
-        client.Setup(x => x.GetMediaEntryAsync(It.IsAny<int>())).ReturnsAsync((AniListNet.Objects.MediaEntry?)null);
+        client.Setup(x => x.GetMediaEntryAsync(It.IsAny<int>())).ReturnsAsync((PlexAniListSync.AniListNet.Objects.MediaEntry?)null);
         var service = BuildService(client.Object);
 
         await service.UpdateMediaAsync(PlexUser, anilistId: 111, episode: 1, MediaType.Episode);

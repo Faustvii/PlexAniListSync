@@ -1,5 +1,5 @@
 using System;
-using AniListNet;
+using PlexAniListSync.AniListNet;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;

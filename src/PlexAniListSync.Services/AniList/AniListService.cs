@@ -1,15 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
-using AniListNet;
-using AniListNet.Objects;
+using PlexAniListSync.AniListNet;
+using PlexAniListSync.AniListNet.Objects;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PlexAniListSync.Models.AniList;
 using PlexAniListSync.Models.Cache;
 using ZiggyCreatures.Caching.Fusion;
 using static PlexAniListSync.Models.AniList.AniListOptions;
-using MediaType = AniListNet.Objects.MediaType;
+using MediaType = PlexAniListSync.AniListNet.Objects.MediaType;
 
 namespace PlexAniListSync.Services.AniList;
 
@@ -198,7 +198,7 @@ public class AniListService : IAniListService
             _ => title
         };
 
-        var filter = new AniListNet.Parameters.SearchMediaFilter
+        var filter = new PlexAniListSync.AniListNet.Parameters.SearchMediaFilter
         {
             Type = MediaType.Anime,
             Format = new Dictionary<MediaFormat, bool>
@@ -242,7 +242,7 @@ public class AniListService : IAniListService
             _ => MediaFormat.Movie
         };
 
-        var filter = new AniListNet.Parameters.SearchMediaFilter
+        var filter = new PlexAniListSync.AniListNet.Parameters.SearchMediaFilter
         {
             Type = MediaType.Anime,
             Format = new Dictionary<MediaFormat, bool> { { format, true } },
@@ -342,7 +342,7 @@ public class AniListService : IAniListService
             }
         }
 
-        var mutation = new AniListNet.Parameters.MediaEntryMutation()
+        var mutation = new PlexAniListSync.AniListNet.Parameters.MediaEntryMutation()
         {
             Progress = episode,
             Status = status,

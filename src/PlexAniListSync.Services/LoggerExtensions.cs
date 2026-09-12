@@ -1,4 +1,4 @@
-using AniListNet.Objects;
+using PlexAniListSync.AniListNet.Objects;
 using Microsoft.Extensions.Logging;
 
 namespace PlexAniListSync.Services;

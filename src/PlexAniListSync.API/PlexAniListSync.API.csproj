@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AniListNet" Version="1.7.0" />
     <PackageReference Include="AsyncFixer" Version="2.1.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -32,6 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PlexAniListSync.Models\PlexAniListSync.Models.csproj" />
     <ProjectReference Include="..\PlexAniListSync.Services\PlexAniListSync.Services.csproj" />
+    <ProjectReference Include="..\PlexAniListSync.AniListNet\PlexAniListSync.AniListNet.csproj" />
   </ItemGroup>
 
 </Project>

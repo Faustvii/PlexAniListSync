@@ -1,0 +1,23 @@
+PlexAniListSync.AniListNet
+==========================
+
+This project is a vendored, trimmed, and modernized fork of the AniListNet client.
+
+Original work:
+  AniListNet - Copyright (c) 2022 Dennise Catolos
+  https://github.com/dentolos19/anilistnet  (archived)
+  Licensed under the MIT License (see LICENSE).
+
+Derived work / ideas incorporated:
+  Kavita.AniListNet - Copyright (c) Kavita
+  https://github.com/Kareadita/anilistnet
+  Licensed under the MIT License.
+
+Modifications made in this repository:
+  - Re-namespaced to PlexAniListSync.AniListNet.
+  - Trimmed to only the operations this app uses (media search, media-entry read/save,
+    and viewer authentication). Character/Staff/Studio/Review/Trend/Schedule/Recommendation
+    operations and their objects were removed.
+  - Migrated from Newtonsoft.Json to System.Text.Json.
+  - Added a typed AniListRateLimitException thrown on HTTP 429 (Cloudflare's HTML rate-limit
+    page previously crashed JSON parsing), with response status read before the body is parsed.
