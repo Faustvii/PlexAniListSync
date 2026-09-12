@@ -1,3 +1,11 @@
+# [3.7.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.6.0...v3.7.0) (2026-09-12)
+
+
+### Features
+
+* **anilist:** vendor AniListNet client on System.Text.Json with typed 429 handling ([11542ad](https://github.com/Faustvii/PlexAniListSync/commit/11542ad82939473bfda78c75caf6bbdecf66bcb1))
+* **retry:** durable FusionCache-backed 429 retry queue for mutations ([bb5f4d2](https://github.com/Faustvii/PlexAniListSync/commit/bb5f4d26decd422825205c4137446689ef4190c1))
+
 # [3.6.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.5.2...v3.6.0) (2026-09-12)
 
 
