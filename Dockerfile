@@ -1,9 +1,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0.401-alpine3.24-amd64 AS build-env
 WORKDIR /app
-EXPOSE 80/tcp
+EXPOSE 8080/tcp
 
-# copy sln file
-COPY *.sln ./
+# copy slnx file
+COPY *.slnx ./
 
 # Copy the main source project files
 COPY src/*/*.csproj ./
