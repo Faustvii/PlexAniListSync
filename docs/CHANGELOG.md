@@ -1,3 +1,10 @@
+## [3.7.1](https://github.com/Faustvii/PlexAniListSync/compare/v3.7.0...v3.7.1) (2026-09-12)
+
+
+### Bug Fixes
+
+* **fusioncache:** fix serilization dropping data ([72a6288](https://github.com/Faustvii/PlexAniListSync/commit/72a62886dd9ef713bfb60e17858f0becf38469f4))
+
 # [3.7.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.6.0...v3.7.0) (2026-09-12)
 
 
