@@ -1,0 +1,17 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/src/">
+    <Project Path="src/PlexAniListSync.AniListNet/PlexAniListSync.AniListNet.csproj" />
+    <Project Path="src/PlexAniListSync.API/PlexAniListSync.API.csproj" />
+    <Project Path="src/PlexAniListSync.Models/PlexAniListSync.Models.csproj" />
+    <Project Path="src/PlexAniListSync.Services/PlexAniListSync.Services.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/PlexAniListSync.IntegrationTests/PlexAniListSync.IntegrationTests.csproj" />
+    <Project Path="test/PlexAniListSync.UnitTests/PlexAniListSync.UnitTests.csproj" />
+  </Folder>
+</Solution>
