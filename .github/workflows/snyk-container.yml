@@ -43,7 +43,7 @@ jobs:
         # Snyk can be used to break the build when it detects vulnerabilities.
         # In this case we want to upload the issues to GitHub Code Scanning
         continue-on-error: true
-        uses: snyk/actions/docker@dc22abdbe8ec00e2a925256fef96f319ca5510ce
+        uses: snyk/actions/docker@9adf32b1121593767fc3c057af55b55db032dc04
         env:
           # In order to use the Snyk Action you will need to have a Snyk API token.
           # More details in https://github.com/snyk/actions#getting-your-snyk-token
@@ -52,7 +52,12 @@ jobs:
         with:
           image: your/image-to-test
           args: --file=Dockerfile
+      - name: Normalize SARIF security-severity
+        # Snyk emits rules whose security-severity is non-numeric
+        run: |
+          jq 'walk(if type == "object" and has("security-severity") then .["security-severity"] = ((.["security-severity"] | tonumber?) // 0 | tostring) else . end)' snyk.sarif > snyk.sarif.tmp
+          mv snyk.sarif.tmp snyk.sarif
       - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: snyk.sarif
