@@ -30,6 +30,7 @@ builder.Services.AddHostedServices(builder.Configuration);
 builder.Services.AddMappingServices();
 builder.Services.AddParsers();
 builder.Services.AddDataCache();
+builder.Services.AddResponseCache(builder.Configuration);
 
 builder.Logging.AddOpenTelemetry(logging =>
 {

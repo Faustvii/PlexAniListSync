@@ -3,8 +3,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using PlexAniListSync.Models.AniList;
+using PlexAniListSync.Models.Cache;
 using PlexAniListSync.Services.AniList;
 using Xunit;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace PlexAniListSync.IntegrationTests.AniList;
 
@@ -27,7 +29,10 @@ public class AniListTests
         };
         var options = Options.Create(anilistOptions);
         var logger = Mock.Of<ILogger<AniListService>>();
-        var service = new AniListService(options, logger, new AniListNet.AniClient());
+        var client = new AniClientWrapper(new AniListNet.AniClient());
+        var cache = new FusionCache(Options.Create(new FusionCacheOptions()));
+        var cacheOptions = Options.Create(new CacheOptions());
+        var service = new AniListService(options, logger, client, cache, cacheOptions);
 
         var anilistId = await service.FindShowAsync(title, season);
 
@@ -50,7 +55,10 @@ public class AniListTests
         };
         var options = Options.Create(anilistOptions);
         var logger = Mock.Of<ILogger<AniListService>>();
-        var service = new AniListService(options, logger, new AniListNet.AniClient());
+        var client = new AniClientWrapper(new AniListNet.AniClient());
+        var cache = new FusionCache(Options.Create(new FusionCacheOptions()));
+        var cacheOptions = Options.Create(new CacheOptions());
+        var service = new AniListService(options, logger, client, cache, cacheOptions);
 
         var anilistId = await service.FindMovieAsync(title);
 

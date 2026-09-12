@@ -5,6 +5,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="PlexAniListSync.UnitTests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AniListNet" Version="1.7.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.12" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.12" />
@@ -13,6 +17,10 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.12" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.12" />
     <PackageReference Include="RateLimiter" Version="2.2.0" />
+    <PackageReference Include="ZiggyCreatures.FusionCache" Version="2.7.2" />
+    <PackageReference Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" Version="2.7.2" />
+    <PackageReference Include="NeoSmart.Caching.Sqlite.AspNetCore" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.12" />
     <PackageReference Include="YamlDotNet" Version="18.1.0" />
     <PackageReference Include="AsyncFixer" Version="2.1.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

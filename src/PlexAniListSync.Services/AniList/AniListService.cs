@@ -1,9 +1,13 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
+using System.Text;
 using AniListNet;
 using AniListNet.Objects;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PlexAniListSync.Models.AniList;
+using PlexAniListSync.Models.Cache;
+using ZiggyCreatures.Caching.Fusion;
 using static PlexAniListSync.Models.AniList.AniListOptions;
 using MediaType = AniListNet.Objects.MediaType;
 
@@ -11,55 +15,94 @@ namespace PlexAniListSync.Services.AniList;
 
 public class AniListService : IAniListService
 {
-    private readonly AniClient _client;
+    private readonly IAniClient _client;
     private readonly IOptions<AniListOptions> _options;
     private readonly ILogger<AniListService> _logger;
+    private readonly IFusionCache _cache;
+    private readonly CacheOptions _cacheOptions;
+    private TimeSpan LookupTtl => TimeSpan.FromHours(_cacheOptions.LookupTtlHours);
+    private TimeSpan NotFoundTtl => TimeSpan.FromHours(_cacheOptions.NotFoundTtlHours);
+    private TimeSpan MediaEntryTtl => TimeSpan.FromHours(_cacheOptions.MediaEntryTtlHours);
 
-    public AniListService(IOptions<AniListOptions> options, ILogger<AniListService> logger, AniClient client)
+    public AniListService(
+        IOptions<AniListOptions> options,
+        ILogger<AniListService> logger,
+        IAniClient client,
+        IFusionCache cache,
+        IOptions<CacheOptions> cacheOptions
+    )
     {
         _options = options;
         _logger = logger;
         _client = client;
+        _cache = cache;
+        _cacheOptions = cacheOptions.Value;
         _client.RateChanged += RateLimitHandler;
     }
 
-    public async Task<int?> FindShowAsync(string title, int season)
+    public ValueTask<int?> FindShowAsync(string title, int season)
+    {
+        var key = $"anilist:show:{NormalizeTitle(title)}:{season.ToStringInvariantCulture()}";
+        return _cache.GetOrSetAsync<int?>(
+            key,
+            (ctx, _) => FindShowUncachedAsync(title, season, ctx),
+            options => options.SetDuration(LookupTtl)
+        );
+    }
+
+    public ValueTask<int?> FindMovieAsync(string title)
+    {
+        var key = $"anilist:movie:{NormalizeTitle(title)}";
+        return _cache.GetOrSetAsync<int?>(
+            key,
+            (ctx, _) => FindMovieUncachedAsync(title, ctx),
+            options => options.SetDuration(LookupTtl)
+        );
+    }
+
+    private async Task<int?> FindShowUncachedAsync(
+        string title,
+        int season,
+        FusionCacheFactoryExecutionContext<int?> ctx
+    )
     {
         var mediaPage = await QueryForShowAsync(title, season);
+        int? id;
         if (mediaPage.Data.Length != 1)
         {
             _logger.LogUnexpectedAmoutOfShows(mediaPage.Data.Length);
             var exactMatch = RetrieveExactMatchMedia(title, mediaPage, season);
             if (exactMatch is not null)
-            {
                 _logger.LogOnlyOneShowMatchedExactTitle(title, mediaPage.Data.Select(x => x.Title.PreferredTitle));
-                return exactMatch.Id;
-            }
-
-            return null;
+            id = exactMatch?.Id;
+        }
+        else
+        {
+            id = mediaPage.Data[0].Id;
         }
 
-        var id = mediaPage.Data[0].Id;
+        ctx.Options.SetDuration(id.HasValue ? LookupTtl : NotFoundTtl);
         return id;
     }
 
-    public async Task<int?> FindMovieAsync(string title)
+    private async Task<int?> FindMovieUncachedAsync(string title, FusionCacheFactoryExecutionContext<int?> ctx)
     {
         var mediaPage = await QueryForMovieAsync(title);
+        int? id;
         if (mediaPage.Data.Length != 1)
         {
             _logger.LogUnexpectedAmoutOfShows(mediaPage.Data.Length);
             var exactMatch = RetrieveExactMatchMedia(title, mediaPage);
             if (exactMatch is not null)
-            {
                 _logger.LogOnlyOneShowMatchedExactTitle(title, mediaPage.Data.Select(x => x.Title.PreferredTitle));
-                return exactMatch.Id;
-            }
-
-            return null;
+            id = exactMatch?.Id;
+        }
+        else
+        {
+            id = mediaPage.Data[0].Id;
         }
 
-        var id = mediaPage.Data[0].Id;
+        ctx.Options.SetDuration(id.HasValue ? LookupTtl : NotFoundTtl);
         return id;
     }
 
@@ -269,7 +312,17 @@ public class AniListService : IAniListService
             _ => MediaEntryStatus.Current,
         };
 
-        var mediaEntry = await _client.GetMediaEntryAsync(anilistId);
+        var entryCacheKey = MediaEntryCacheKey(user.Token, anilistId);
+        var mediaEntry = await _cache.GetOrSetAsync<CachedMediaEntry?>(
+            entryCacheKey,
+            async (_, _) =>
+            {
+                var entry = await _client.GetMediaEntryAsync(anilistId);
+                return entry is null ? null : CachedMediaEntry.From(entry);
+            },
+            options => options.SetDuration(MediaEntryTtl)
+        );
+
         DateTime? completedDate = mediaType switch
         {
             Models.Webhook.MediaType.Movie => DateTime.UtcNow,
@@ -294,7 +347,7 @@ public class AniListService : IAniListService
         {
             Progress = episode,
             Status = status,
-            StartDate = mediaEntry is null ? startDate : mediaEntry.StartDate.ToDateTime(),
+            StartDate = mediaEntry is null ? startDate : mediaEntry.StartDate,
             CompleteDate = completedDate,
         };
 
@@ -307,7 +360,27 @@ public class AniListService : IAniListService
         );
 
         if (_options.Value.TestMode is false)
-            await _client.SaveMediaEntryAsync(anilistId, mutation);
+        {
+            var saved = await _client.SaveMediaEntryAsync(anilistId, mutation);
+            // Write-through: keep the cached progress fresh so a binge's next episode
+            // reads from cache instead of hitting AniList again.
+            await _cache.SetAsync(entryCacheKey, CachedMediaEntry.From(saved), options => options.SetDuration(MediaEntryTtl));
+        }
+    }
+
+    internal static string NormalizeTitle(string title)
+    {
+        var normalized = RemoveAnnoyingCharacters(title).Trim().ToLowerInvariant();
+        // collapse internal whitespace runs so "a  b" and "a b" share a key
+        return string.Join(' ', normalized.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+    }
+
+    // AniList tokens are secrets; never put the raw token in a cache key (it can land in the SQLite/Redis store).
+    internal static string MediaEntryCacheKey(string token, int anilistId)
+    {
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(token));
+        var hash = Convert.ToHexString(bytes);
+        return $"anilist:entry:{hash}:{anilistId.ToStringInvariantCulture()}";
     }
 
     private void RateLimitHandler(object? sender, AniRateEventArgs eventArgs)
