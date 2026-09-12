@@ -4,5 +4,7 @@ namespace PlexAniListSync.Services.Webhook;
 
 public interface IWebhookService
 {
-    Task<bool> HandleAsync(WebhookData data);
+    Task<WebhookResult> HandleAsync(WebhookData data);
+
+    Task<ResolvedMutation?> ResolveAsync(WebhookData data);
 }

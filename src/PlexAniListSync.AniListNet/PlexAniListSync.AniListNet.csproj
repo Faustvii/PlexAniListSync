@@ -5,9 +5,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
-    <!-- Private [GqlSelection] backing fields are populated by the STJ resolver via reflection. -->
     <NoWarn>$(NoWarn);CS0649</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="PlexAniListSync.UnitTests" />
+  </ItemGroup>
 
   <!--
     Vendored & trimmed fork of AniListNet (github.com/dentolos19/anilistnet, archived) with

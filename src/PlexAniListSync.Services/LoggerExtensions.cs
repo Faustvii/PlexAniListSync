@@ -21,6 +21,13 @@ internal static class LoggerExtensions
     private static readonly Action<ILogger, string, Exception?> LogUnableToFindTokenFromPlexUserAction;
     private static readonly Action<ILogger, string, Exception?> LogUnexpectedHostedServiceErrorAction;
     private static readonly Action<ILogger, string, string, Exception?> LogOnlyOneShowMatchedExactTitleAction;
+    private static readonly Action<ILogger, string, int, Exception?> LogMutationQueuedRateLimitedAction;
+    private static readonly Action<ILogger, string, int, Exception?> LogRetryQueueDisabledDroppingMutationAction;
+    private static readonly Action<ILogger, string, int, int, Exception?> LogRetryQueueEntryExpiredAction;
+    private static readonly Action<ILogger, string, int, Exception?> LogRetryQueueEntryUnresolvableAction;
+    private static readonly Action<ILogger, int, int, int, Exception?> LogRetryQueueEntryDrainedAction;
+    private static readonly Action<ILogger, int, Exception?> LogDrainRateLimitedOnUpdateAction;
+    private static readonly Action<ILogger, int, Exception?> LogDrainRateLimitedOnResolveAction;
 
 #pragma warning disable MA0051 // I'm okay with this being long
     static LoggerExtensions()
@@ -115,6 +122,48 @@ internal static class LoggerExtensions
             eventId: 16,
             formatString: "We managed to find only one exact match from '{PossibleShows}' with '{Title}'"
         );
+
+        LogMutationQueuedRateLimitedAction = LoggerMessage.Define<string, int>(
+            logLevel: LogLevel.Warning,
+            eventId: 17,
+            formatString: "AniList is rate-limiting - queued '{ShowTitle}' episode {Episode} for a durable retry"
+        );
+
+        LogRetryQueueDisabledDroppingMutationAction = LoggerMessage.Define<string, int>(
+            logLevel: LogLevel.Warning,
+            eventId: 18,
+            formatString: "Retry queue is disabled - dropping '{ShowTitle}' episode {Episode} after an AniList 429"
+        );
+
+        LogRetryQueueEntryExpiredAction = LoggerMessage.Define<string, int, int>(
+            logLevel: LogLevel.Warning,
+            eventId: 19,
+            formatString: "Dropping stale retry-queue entry '{ShowTitle}' episode {Episode} after {Attempts} attempts"
+        );
+
+        LogRetryQueueEntryUnresolvableAction = LoggerMessage.Define<string, int>(
+            logLevel: LogLevel.Warning,
+            eventId: 20,
+            formatString: "Dropping retry-queue entry '{ShowTitle}' S{Season} - no longer resolves to an AniList id"
+        );
+
+        LogRetryQueueEntryDrainedAction = LoggerMessage.Define<int, int, int>(
+            logLevel: LogLevel.Information,
+            eventId: 21,
+            formatString: "Drained retry-queue entry - AniList {AniListId} episode {Episode} ({Coalesced} webhook(s) coalesced)"
+        );
+
+        LogDrainRateLimitedOnUpdateAction = LoggerMessage.Define<int>(
+            logLevel: LogLevel.Warning,
+            eventId: 22,
+            formatString: "AniList rate-limited applying AniList {AniListId} during drain - pausing and rescheduling with backoff"
+        );
+
+        LogDrainRateLimitedOnResolveAction = LoggerMessage.Define<int>(
+            logLevel: LogLevel.Warning,
+            eventId: 23,
+            formatString: "AniList rate-limited resolving episode {Episode} during drain - pausing and rescheduling with backoff"
+        );
     }
 
     public static void LogUnexpectedAmoutOfShows(this ILogger logger, int showCount)
@@ -208,6 +257,41 @@ internal static class LoggerExtensions
     )
     {
         LogOnlyOneShowMatchedExactTitleAction(logger, string.Join(", ", possibleShows), title, null);
+    }
+
+    public static void LogMutationQueuedRateLimited(this ILogger logger, string showTitle, int episode)
+    {
+        LogMutationQueuedRateLimitedAction(logger, showTitle, episode, null);
+    }
+
+    public static void LogRetryQueueDisabledDroppingMutation(this ILogger logger, string showTitle, int episode)
+    {
+        LogRetryQueueDisabledDroppingMutationAction(logger, showTitle, episode, null);
+    }
+
+    public static void LogRetryQueueEntryExpired(this ILogger logger, string showTitle, int episode, int attempts)
+    {
+        LogRetryQueueEntryExpiredAction(logger, showTitle, episode, attempts, null);
+    }
+
+    public static void LogRetryQueueEntryUnresolvable(this ILogger logger, string showTitle, int season)
+    {
+        LogRetryQueueEntryUnresolvableAction(logger, showTitle, season, null);
+    }
+
+    public static void LogRetryQueueEntryDrained(this ILogger logger, int aniListId, int episode, int coalesced)
+    {
+        LogRetryQueueEntryDrainedAction(logger, aniListId, episode, coalesced, null);
+    }
+
+    public static void LogDrainRateLimitedOnUpdate(this ILogger logger, int aniListId)
+    {
+        LogDrainRateLimitedOnUpdateAction(logger, aniListId, null);
+    }
+
+    public static void LogDrainRateLimitedOnResolve(this ILogger logger, int episode)
+    {
+        LogDrainRateLimitedOnResolveAction(logger, episode, null);
     }
 }
 #pragma warning restore MA0003

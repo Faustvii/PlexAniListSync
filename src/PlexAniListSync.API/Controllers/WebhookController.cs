@@ -30,7 +30,16 @@ public class WebhookController : ControllerBase
     public async Task<IActionResult> Post([FromBody] WebhookData data)
     {
         var result = await _webhookService.HandleAsync(data);
-        return result ? Ok() : BadRequest("Could not find Anilist show");
+        return result switch
+        {
+            WebhookResult.Applied => Ok(),
+            WebhookResult.Queued => Accepted(),
+            WebhookResult.RateLimited => StatusCode(
+                StatusCodes.Status502BadGateway,
+                "AniList upstream returned 429 (rate limited) and the retry queue is disabled"
+            ),
+            _ => BadRequest("Could not find Anilist show"),
+        };
     }
 
     [HttpGet]
