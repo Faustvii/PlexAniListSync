@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <ItemGroup>
     <ProjectReference Include="..\PlexAniListSync.Models\PlexAniListSync.Models.csproj" />
     <ProjectReference Include="..\PlexAniListSync.AniListNet\PlexAniListSync.AniListNet.csproj" />
@@ -41,5 +40,4 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
 </Project>

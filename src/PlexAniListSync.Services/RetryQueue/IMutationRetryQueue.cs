@@ -18,7 +18,11 @@ public interface IMutationRetryQueue
     Task<bool> EnqueueAsync(WebhookData data, DateTimeOffset now, CancellationToken cancellationToken);
 
     /// <summary>Entries whose <c>NextAttemptAt</c> is at or before <paramref name="now"/>, oldest first, capped at <paramref name="limit"/>.</summary>
-    Task<IReadOnlyList<QueuedMutation>> DequeueDueAsync(DateTimeOffset now, int limit, CancellationToken cancellationToken);
+    Task<IReadOnlyList<QueuedMutation>> DequeueDueAsync(
+        DateTimeOffset now,
+        int limit,
+        CancellationToken cancellationToken
+    );
 
     /// <summary>Remove an entry (it succeeded, expired, or became unresolvable).</summary>
     Task RemoveAsync(QueuedMutation entry, CancellationToken cancellationToken);

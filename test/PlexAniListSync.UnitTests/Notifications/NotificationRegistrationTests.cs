@@ -32,10 +32,7 @@ public class NotificationRegistrationTests
         using var provider = BuildServices(("Notifications:Enabled", "false"));
 
         Assert.IsType<NoOpNotificationService>(provider.GetRequiredService<INotificationService>());
-        Assert.DoesNotContain(
-            provider.GetServices<ILoggerProvider>(),
-            x => x is ErrorNotificationLoggerProvider
-        );
+        Assert.DoesNotContain(provider.GetServices<ILoggerProvider>(), x => x is ErrorNotificationLoggerProvider);
         Assert.DoesNotContain(provider.GetServices<IHostedService>(), x => x is NotificationWorker);
     }
 

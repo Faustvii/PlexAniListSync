@@ -42,11 +42,7 @@ public sealed class FusionCacheMutationRetryQueue : IMutationRetryQueue
         try
         {
             var entries = await ReadAsync();
-            return entries
-                .Where(e => e.NextAttemptAt <= now)
-                .OrderBy(e => e.EnqueuedAt)
-                .Take(limit)
-                .ToList();
+            return entries.Where(e => e.NextAttemptAt <= now).OrderBy(e => e.EnqueuedAt).Take(limit).ToList();
         }
         finally
         {
@@ -70,7 +66,11 @@ public sealed class FusionCacheMutationRetryQueue : IMutationRetryQueue
         }
     }
 
-    public async Task RescheduleAsync(QueuedMutation entry, DateTimeOffset nextAttemptAt, CancellationToken cancellationToken)
+    public async Task RescheduleAsync(
+        QueuedMutation entry,
+        DateTimeOffset nextAttemptAt,
+        CancellationToken cancellationToken
+    )
     {
         await _lock.WaitAsync(cancellationToken);
         try

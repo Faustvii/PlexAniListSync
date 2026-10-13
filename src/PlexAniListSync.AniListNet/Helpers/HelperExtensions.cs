@@ -6,9 +6,6 @@ internal static class HelperExtensions
     {
         var includedItems = dictionary.Where(item => item.Value);
         var excludedItems = dictionary.Where(item => !item.Value);
-        return (
-            includedItems.Select(item => item.Key).ToArray(),
-            excludedItems.Select(item => item.Key).ToArray()
-        );
+        return (includedItems.Select(item => item.Key).ToArray(), excludedItems.Select(item => item.Key).ToArray());
     }
 }

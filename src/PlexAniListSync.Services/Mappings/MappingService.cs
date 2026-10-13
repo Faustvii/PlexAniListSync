@@ -15,8 +15,8 @@ public class MappingService : IMappingService
     {
         var anilistMappings = _cache.GetAnilistMapping();
 
-        var anime = anilistMappings.FirstOrDefault(
-            x => x.LookupIds.Any(x => x.Equals(plexGuid, StringComparison.OrdinalIgnoreCase))
+        var anime = anilistMappings.FirstOrDefault(x =>
+            x.LookupIds.Any(x => x.Equals(plexGuid, StringComparison.OrdinalIgnoreCase))
         );
         if (anime is null)
             return 0;
@@ -36,8 +36,8 @@ public class MappingService : IMappingService
     {
         var episodeMappings = _cache.GetEpisodeRuleMappings();
 
-        var episodeMapping = episodeMappings.FirstOrDefault(
-            x => x.From.AnilistId.Equals(anilistId.ToStringInvariantCulture(), StringComparison.OrdinalIgnoreCase)
+        var episodeMapping = episodeMappings.FirstOrDefault(x =>
+            x.From.AnilistId.Equals(anilistId.ToStringInvariantCulture(), StringComparison.OrdinalIgnoreCase)
         );
 
         if (episodeMapping == null)

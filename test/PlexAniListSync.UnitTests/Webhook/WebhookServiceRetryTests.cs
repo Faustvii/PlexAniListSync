@@ -54,7 +54,9 @@ public class WebhookServiceRetryTests
     private static Mock<IMappingService> DefaultMapping()
     {
         var mapping = new Mock<IMappingService>();
-        mapping.Setup(x => x.GetAniListIdFromPlexGuid(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).Returns(AnilistId);
+        mapping
+            .Setup(x => x.GetAniListIdFromPlexGuid(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(AnilistId);
         mapping.Setup(x => x.GetEpisodeNumber(It.IsAny<int>(), AnilistId)).Returns((5, AnilistId));
         return mapping;
     }
@@ -85,7 +87,9 @@ public class WebhookServiceRetryTests
             .ThrowsAsync(RateLimit());
         var queue = new Mock<IMutationRetryQueue>();
         queue
-            .Setup(x => x.EnqueueAsync(It.IsAny<WebhookData>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .Setup(x =>
+                x.EnqueueAsync(It.IsAny<WebhookData>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync(true);
         var gate = new RateLimitGate();
         var service = BuildService(aniList, queue, gate);
@@ -109,7 +113,9 @@ public class WebhookServiceRetryTests
             .ThrowsAsync(RateLimit());
         var queue = new Mock<IMutationRetryQueue>();
         queue
-            .Setup(x => x.EnqueueAsync(It.IsAny<WebhookData>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .Setup(x =>
+                x.EnqueueAsync(It.IsAny<WebhookData>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync(false);
         var service = BuildService(aniList, queue, new RateLimitGate());
 
@@ -124,7 +130,9 @@ public class WebhookServiceRetryTests
         var aniList = new Mock<IAniListService>(MockBehavior.Strict);
         var queue = new Mock<IMutationRetryQueue>();
         queue
-            .Setup(x => x.EnqueueAsync(It.IsAny<WebhookData>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .Setup(x =>
+                x.EnqueueAsync(It.IsAny<WebhookData>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync(true);
         var mapping = new Mock<IMappingService>(MockBehavior.Strict);
         var gate = new RateLimitGate();

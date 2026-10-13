@@ -5,7 +5,8 @@ namespace PlexAniListSync.AniListNet.Objects;
 
 public class MediaCover : Image
 {
-    [GqlSelection("color")] private readonly string? _color;
+    [GqlSelection("color")]
+    private readonly string? _color;
 
     /// <summary>
     /// The cover image's URL of the media at its largest size. If this size isn't available, large will be provided instead.

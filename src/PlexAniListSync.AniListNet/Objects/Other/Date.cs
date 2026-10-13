@@ -4,9 +4,14 @@ namespace PlexAniListSync.AniListNet.Objects;
 
 public class Date
 {
-    [GqlSelection("year")] public int? Year { get; private set; }
-    [GqlSelection("month")] public int? Month { get; private set; }
-    [GqlSelection("day")] public int? Day { get; private set; }
+    [GqlSelection("year")]
+    public int? Year { get; private set; }
+
+    [GqlSelection("month")]
+    public int? Month { get; private set; }
+
+    [GqlSelection("day")]
+    public int? Day { get; private set; }
 
     public DateTime? ToDateTime()
     {

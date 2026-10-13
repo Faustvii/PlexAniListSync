@@ -8,15 +8,21 @@ public class AniException : Exception
     public string ActualResponseBody { get; }
     public HttpStatusCode StatusCode { get; }
 
-    internal AniException(string message, string actualRequestBody, string actualResponseBody,
-        HttpStatusCode statusCode) : base(message)
+    internal AniException(
+        string message,
+        string actualRequestBody,
+        string actualResponseBody,
+        HttpStatusCode statusCode
+    )
+        : base(message)
     {
         ActualRequestBody = actualRequestBody;
         ActualResponseBody = actualResponseBody;
         StatusCode = statusCode;
     }
 
-    internal AniException(HttpStatusCode statusCode, string message) : base(message)
+    internal AniException(HttpStatusCode statusCode, string message)
+        : base(message)
     {
         ActualRequestBody = string.Empty;
         ActualResponseBody = string.Empty;

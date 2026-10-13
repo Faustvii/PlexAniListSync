@@ -14,7 +14,13 @@ public class NoOpMutationRetryQueueTests
     public async Task Enqueue_ReturnsFalse_SoTheCallerSurfacesTheRateLimit()
     {
         var queue = new NoOpMutationRetryQueue(NullLogger<NoOpMutationRetryQueue>.Instance);
-        var data = new WebhookData { User = "u", PlexGuid = "g", Season = 1, Episode = 5 };
+        var data = new WebhookData
+        {
+            User = "u",
+            PlexGuid = "g",
+            Season = 1,
+            Episode = 5,
+        };
 
         var queued = await queue.EnqueueAsync(data, DateTimeOffset.UtcNow, CancellationToken.None);
 

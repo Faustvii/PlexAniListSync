@@ -25,19 +25,29 @@ public class MediaEntryMutation
         if (VolumeProgress.HasValue)
             parameters.Add(new GqlParameter("progressVolumes", VolumeProgress.Value));
         if (StartDate.HasValue)
-            parameters.Add(new GqlParameter("startedAt", new GqlParameter[]
-            {
-                new("year", StartDate.Value.Year),
-                new("month", StartDate.Value.Month),
-                new("day", StartDate.Value.Day)
-            }));
+            parameters.Add(
+                new GqlParameter(
+                    "startedAt",
+                    new GqlParameter[]
+                    {
+                        new("year", StartDate.Value.Year),
+                        new("month", StartDate.Value.Month),
+                        new("day", StartDate.Value.Day),
+                    }
+                )
+            );
         if (CompleteDate.HasValue)
-            parameters.Add(new GqlParameter("completedAt", new List<GqlParameter>
-            {
-                new("year", CompleteDate.Value.Year),
-                new("month", CompleteDate.Value.Month),
-                new("day", CompleteDate.Value.Day)
-            }));
+            parameters.Add(
+                new GqlParameter(
+                    "completedAt",
+                    new List<GqlParameter>
+                    {
+                        new("year", CompleteDate.Value.Year),
+                        new("month", CompleteDate.Value.Month),
+                        new("day", CompleteDate.Value.Day),
+                    }
+                )
+            );
         if (!string.IsNullOrEmpty(Notes))
             parameters.Add(new GqlParameter("notes", Notes));
         return parameters;

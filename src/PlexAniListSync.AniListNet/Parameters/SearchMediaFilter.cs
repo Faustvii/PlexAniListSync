@@ -22,11 +22,7 @@ public class SearchMediaFilter
     {
         var parameters = new List<GqlParameter>();
         if (Season.HasValue)
-            parameters.AddRange(new GqlParameter[]
-            {
-                new("season", Season),
-                new("seasonYear", SeasonYear)
-            });
+            parameters.AddRange(new GqlParameter[] { new("season", Season), new("seasonYear", SeasonYear) });
         if (Type.HasValue)
             parameters.Add(new GqlParameter("type", Type));
         if (IsAdult.HasValue)
@@ -74,8 +70,8 @@ public class SearchMediaFilter
         parameters.Add(
             new GqlParameter(
                 "sort",
-                $"${HelperUtilities.GetEnumMemberValue(Sort)}" +
-                (SortDescending && Sort != MediaSort.Relevance ? "_DESC" : string.Empty)
+                $"${HelperUtilities.GetEnumMemberValue(Sort)}"
+                    + (SortDescending && Sort != MediaSort.Relevance ? "_DESC" : string.Empty)
             )
         );
         return parameters;

@@ -28,8 +28,8 @@ public class MappingServiceTests
                     {
                         Title = "MyTitle",
                         LookupIds = new[] { "MyTitle" },
-                        Seasons = seasons
-                    }
+                        Seasons = seasons,
+                    },
                 }
             );
         var service = new MappingService(dataCache.Object);
@@ -63,9 +63,9 @@ public class MappingServiceTests
                         LookupIds = lookupIds,
                         Seasons = new[]
                         {
-                            new AnilistSeason { AnilistId = expectedId, Number = 1 }
-                        }
-                    }
+                            new AnilistSeason { AnilistId = expectedId, Number = 1 },
+                        },
+                    },
                 }
             );
         var service = new MappingService(dataCache.Object);
@@ -82,14 +82,14 @@ public class MappingServiceTests
             {
                 Number = 1,
                 AnilistId = 101,
-                Start = 12
+                Start = 12,
             },
-            new AnilistSeason { Number = 2, AnilistId = 102 }
+            new AnilistSeason { Number = 2, AnilistId = 102 },
         };
 
         private static readonly AnilistSeason[] SingleSeasonData = new[]
         {
-            new AnilistSeason { Number = 1, AnilistId = 104 }
+            new AnilistSeason { Number = 1, AnilistId = 104 },
         };
 
         public static IEnumerable<object[]> GetSeasonTestData()

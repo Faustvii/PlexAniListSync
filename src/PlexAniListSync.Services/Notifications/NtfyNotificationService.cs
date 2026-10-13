@@ -24,7 +24,9 @@ internal sealed class NtfyNotificationService : INotificationService
         if (target is not { IsConfigured: true })
             return;
 
-        var media = string.IsNullOrWhiteSpace(mediaTitle) ? $"AniList #{anilistId.ToStringInvariantCulture()}" : mediaTitle;
+        var media = string.IsNullOrWhiteSpace(mediaTitle)
+            ? $"AniList #{anilistId.ToStringInvariantCulture()}"
+            : mediaTitle;
         var isMovie = mediaType == MediaType.Movie;
         _queue.Enqueue(
             new QueuedNotification(

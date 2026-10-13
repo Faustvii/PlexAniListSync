@@ -14,7 +14,8 @@ public class DataCache : IDataCache
 
     public IReadOnlyList<AnilistMapping> GetAnilistMapping()
     {
-        return _cache.Get<IReadOnlyList<AnilistMapping>>(Constants.AnimeMappingCacheKey) ?? Array.Empty<AnilistMapping>();
+        return _cache.Get<IReadOnlyList<AnilistMapping>>(Constants.AnimeMappingCacheKey)
+            ?? Array.Empty<AnilistMapping>();
     }
 
     public IReadOnlyList<EpisodeRuleMapping> GetEpisodeRuleMappings()

@@ -36,7 +36,11 @@ public static class RetryScheduling
     /// The instant a 429 should pause AniList traffic until: the rate-limit reset if present, else
     /// <c>Retry-After</c> seconds from now, else a small default pause.
     /// </summary>
-    public static DateTimeOffset PauseUntil(AniListRateLimitException exception, DateTimeOffset now, RetryQueueOptions options)
+    public static DateTimeOffset PauseUntil(
+        AniListRateLimitException exception,
+        DateTimeOffset now,
+        RetryQueueOptions options
+    )
     {
         if (exception.RateReset is { } reset)
         {

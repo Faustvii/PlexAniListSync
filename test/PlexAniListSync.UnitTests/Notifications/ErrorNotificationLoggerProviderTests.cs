@@ -24,10 +24,11 @@ public class ErrorNotificationLoggerProviderTests
         logger.LogError(new EventId(3), "We were unable to authenticate 123 4 was not updated");
 
         _notifications.Verify(
-            x => x.NotifyGlobalError(
-                "PlexAniListSync.Services.AniList.AniListService:3",
-                It.Is<string>(m => m.StartsWith("Failed to update AniList progress", StringComparison.Ordinal))
-            ),
+            x =>
+                x.NotifyGlobalError(
+                    "PlexAniListSync.Services.AniList.AniListService:3",
+                    It.Is<string>(m => m.StartsWith("Failed to update AniList progress", StringComparison.Ordinal))
+                ),
             Times.Once
         );
     }
@@ -40,10 +41,11 @@ public class ErrorNotificationLoggerProviderTests
         logger.LogError(new EventId(99), "boom");
 
         _notifications.Verify(
-            x => x.NotifyGlobalError(
-                "PlexAniListSync.Services.SomethingElse:99",
-                It.Is<string>(m => m.StartsWith("Unexpected error", StringComparison.Ordinal) && m.Contains("boom"))
-            ),
+            x =>
+                x.NotifyGlobalError(
+                    "PlexAniListSync.Services.SomethingElse:99",
+                    It.Is<string>(m => m.StartsWith("Unexpected error", StringComparison.Ordinal) && m.Contains("boom"))
+                ),
             Times.Once
         );
     }

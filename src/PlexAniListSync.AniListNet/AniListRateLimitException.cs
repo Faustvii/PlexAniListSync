@@ -14,10 +14,18 @@ public sealed class AniListRateLimitException : AniException
     /// <summary>When the rate limit resets, derived from <c>X-RateLimit-Reset</c> or <c>Retry-After</c>.</summary>
     public DateTime? RateReset { get; }
 
-    internal AniListRateLimitException(string actualRequestBody, string actualResponseBody, int? retryAfter,
-        int? rateResetUnixSeconds)
-        : base("AniList rate limit exceeded (HTTP 429).", actualRequestBody, actualResponseBody,
-            HttpStatusCode.TooManyRequests)
+    internal AniListRateLimitException(
+        string actualRequestBody,
+        string actualResponseBody,
+        int? retryAfter,
+        int? rateResetUnixSeconds
+    )
+        : base(
+            "AniList rate limit exceeded (HTTP 429).",
+            actualRequestBody,
+            actualResponseBody,
+            HttpStatusCode.TooManyRequests
+        )
     {
         RetryAfter = retryAfter;
         RateReset = HelperUtilities.ResolveRateReset(rateResetUnixSeconds, retryAfter);

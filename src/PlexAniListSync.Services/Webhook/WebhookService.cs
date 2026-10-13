@@ -54,7 +54,12 @@ public class WebhookService : IWebhookService
                 return WebhookResult.NotFound;
             }
 
-            await _aniListService.UpdateMediaAsync(data.User, resolved.AnilistId, resolved.AnilistEpisode, resolved.Type);
+            await _aniListService.UpdateMediaAsync(
+                data.User,
+                resolved.AnilistId,
+                resolved.AnilistEpisode,
+                resolved.Type
+            );
             return WebhookResult.Applied;
         }
         catch (AniListRateLimitException ex)
@@ -83,7 +88,7 @@ public class WebhookService : IWebhookService
             anilistId = data.Type switch
             {
                 MediaType.Movie => (await _aniListService.FindMovieAsync(data.ShowTitle)).GetValueOrDefault(),
-                _ => (await _aniListService.FindShowAsync(data.ShowTitle, data.Season)).GetValueOrDefault()
+                _ => (await _aniListService.FindShowAsync(data.ShowTitle, data.Season)).GetValueOrDefault(),
             };
             if (anilistId is default(int))
                 return null;
@@ -92,7 +97,7 @@ public class WebhookService : IWebhookService
         var (anilistEpisodeNumber, _) = data.Type switch
         {
             MediaType.Movie => (1, anilistId),
-            _ => _mappingService.GetEpisodeNumber(data.Episode, anilistId)
+            _ => _mappingService.GetEpisodeNumber(data.Episode, anilistId),
         };
 
         return new ResolvedMutation(anilistId, anilistEpisodeNumber, data.Type);

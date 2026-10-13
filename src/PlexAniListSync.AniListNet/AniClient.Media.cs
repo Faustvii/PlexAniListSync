@@ -18,7 +18,7 @@ public partial class AniClient
         var selections = new GqlSelection("Media")
         {
             Parameters = new GqlParameter[] { new("id", mediaId) },
-            Selections = new GqlSelection[] { new("mediaListEntry", GqlParser.ParseToSelections<MediaEntry>()) }
+            Selections = new GqlSelection[] { new("mediaListEntry", GqlParser.ParseToSelections<MediaEntry>()) },
         };
 
         try

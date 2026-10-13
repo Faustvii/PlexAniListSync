@@ -25,8 +25,8 @@ public class AniListServiceCachingTests
                 TestMode = true, // no real mutation; exercises only the read/cache path
                 Users = new[]
                 {
-                    new AniListOptions.AniListUser { PlexUsernames = new[] { PlexUser }, Token = Token }
-                }
+                    new AniListOptions.AniListUser { PlexUsernames = new[] { PlexUser }, Token = Token },
+                },
             }
         );
         var cache = new FusionCache(Options.Create(new FusionCacheOptions()));
@@ -45,7 +45,9 @@ public class AniListServiceCachingTests
     {
         var client = new Mock<IAniClient>(MockBehavior.Strict);
         client.Setup(x => x.TryAuthenticateAsync(Token)).ReturnsAsync(true);
-        client.Setup(x => x.GetMediaEntryAsync(It.IsAny<int>())).ReturnsAsync((PlexAniListSync.AniListNet.Objects.MediaEntry?)null);
+        client
+            .Setup(x => x.GetMediaEntryAsync(It.IsAny<int>()))
+            .ReturnsAsync((PlexAniListSync.AniListNet.Objects.MediaEntry?)null);
         var service = BuildService(client.Object);
 
         await service.UpdateMediaAsync(PlexUser, anilistId: 187538, episode: 7, MediaType.Episode);
@@ -59,7 +61,9 @@ public class AniListServiceCachingTests
     {
         var client = new Mock<IAniClient>(MockBehavior.Strict);
         client.Setup(x => x.TryAuthenticateAsync(Token)).ReturnsAsync(true);
-        client.Setup(x => x.GetMediaEntryAsync(It.IsAny<int>())).ReturnsAsync((PlexAniListSync.AniListNet.Objects.MediaEntry?)null);
+        client
+            .Setup(x => x.GetMediaEntryAsync(It.IsAny<int>()))
+            .ReturnsAsync((PlexAniListSync.AniListNet.Objects.MediaEntry?)null);
         var service = BuildService(client.Object);
 
         await service.UpdateMediaAsync(PlexUser, anilistId: 111, episode: 1, MediaType.Episode);

@@ -4,7 +4,8 @@ namespace PlexAniListSync.AniListNet.Objects;
 
 public class MediaEntrySub
 {
-    [GqlSelection("media")] private readonly Media _media = null!;
+    [GqlSelection("media")]
+    private readonly Media _media = null!;
 
     /// <summary>
     /// The ID of the list entry.
@@ -62,8 +63,13 @@ public class MediaEntrySub
 
     private class Media
     {
-        [GqlSelection("episodes")] public int? Episodes { get; private set; }
-        [GqlSelection("chapters")] public int? Chapters { get; private set; }
-        [GqlSelection("volumes")] public int? Volumes { get; private set; }
+        [GqlSelection("episodes")]
+        public int? Episodes { get; private set; }
+
+        [GqlSelection("chapters")]
+        public int? Chapters { get; private set; }
+
+        [GqlSelection("volumes")]
+        public int? Volumes { get; private set; }
     }
 }

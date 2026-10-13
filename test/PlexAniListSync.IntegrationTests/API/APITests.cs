@@ -44,7 +44,14 @@ public class APITests
             {
                 Page = new
                 {
-                    pageInfo = new { total = 1, perPage = 20, currentPage = 1, lastPage = 1, hasNextPage = false },
+                    pageInfo = new
+                    {
+                        total = 1,
+                        perPage = 20,
+                        currentPage = 1,
+                        lastPage = 1,
+                        hasNextPage = false,
+                    },
                     media = new[]
                     {
                         new
@@ -56,15 +63,25 @@ public class APITests
                                 romaji = "Gleipnir",
                                 english = "Gleipnir",
                                 native = "グレイプニル",
-                                userPreferred = "Gleipnir"
+                                userPreferred = "Gleipnir",
                             },
                             type = "ANIME",
                             format = "TV",
                             status = "FINISHED",
                             description = "Blabla",
                             descriptionHtml = "<p>blabla</p>",
-                            startDate = new { year = 2020, month = 4, day = 5 },
-                            endDate = new { year = 2020, month = 6, day = 28 },
+                            startDate = new
+                            {
+                                year = 2020,
+                                month = 4,
+                                day = 5,
+                            },
+                            endDate = new
+                            {
+                                year = 2020,
+                                month = 6,
+                                day = 28,
+                            },
                             season = "SPRING",
                             seasonYear = 2020,
                             episodes = 13,
@@ -85,11 +102,11 @@ public class APITests
                             isFavourite = false,
                             mediaListEntry = (object?)null,
                             duration = 24,
-                            updatedAt = 1750277761
-                        }
-                    }
-                }
-            }
+                            updatedAt = 1750277761,
+                        },
+                    },
+                },
+            },
         };
         var viewerResponse = new { data = new { Viewer = new { id = 1, name = "tester" } } };
         var mediaEntryResponse = new { data = new { Media = new { mediaListEntry = (object?)null } } };
@@ -108,11 +125,10 @@ public class APITests
                     var body = request.Content!.ReadAsStringAsync().GetAwaiter().GetResult();
                     // Route on the operation root: the search query is "{Page(...)...}" (and also
                     // contains a nested "mediaListEntry", so match "Page(" before falling through).
-                    object payload = body.Contains("Viewer", StringComparison.Ordinal)
-                        ? viewerResponse
-                        : body.Contains("Page(", StringComparison.Ordinal)
-                            ? searchResponse
-                            : mediaEntryResponse;
+                    object payload =
+                        body.Contains("Viewer", StringComparison.Ordinal) ? viewerResponse
+                        : body.Contains("Page(", StringComparison.Ordinal) ? searchResponse
+                        : mediaEntryResponse;
                     return new HttpResponseMessage
                     {
                         StatusCode = System.Net.HttpStatusCode.OK,
@@ -143,7 +159,7 @@ public class APITests
             PlexGuid = "plex://show/12345",
             EpisodeRatingKey = "plex://episode/67890",
             SeasonRatingKey = "plex://season/54321",
-            ShowRatingKey = "plex://show/12345"
+            ShowRatingKey = "plex://show/12345",
         };
 
         var response = await client.PostAsJsonAsync("/Webhook", webhookData);
@@ -170,18 +186,16 @@ public class APITests
                 ItExpr.IsAny<HttpRequestMessage>(),
                 ItExpr.IsAny<CancellationToken>()
             )
-            .ReturnsAsync(
-                () =>
+            .ReturnsAsync(() =>
+            {
+                var response = new HttpResponseMessage
                 {
-                    var response = new HttpResponseMessage
-                    {
-                        StatusCode = System.Net.HttpStatusCode.TooManyRequests,
-                        Content = new StringContent("<!DOCTYPE html><html><body>429</body></html>"),
-                    };
-                    response.Headers.TryAddWithoutValidation("Retry-After", "30");
-                    return response;
-                }
-            );
+                    StatusCode = System.Net.HttpStatusCode.TooManyRequests,
+                    Content = new StringContent("<!DOCTYPE html><html><body>429</body></html>"),
+                };
+                response.Headers.TryAddWithoutValidation("Retry-After", "30");
+                return response;
+            });
 
         var aniClient = new AniClient(new HttpClient(handlerMock.Object));
 
@@ -205,7 +219,7 @@ public class APITests
             PlexGuid = "plex://show/12345",
             EpisodeRatingKey = "plex://episode/67890",
             SeasonRatingKey = "plex://season/54321",
-            ShowRatingKey = "plex://show/12345"
+            ShowRatingKey = "plex://show/12345",
         };
 
         var response = await client.PostAsJsonAsync("/Webhook", webhookData);

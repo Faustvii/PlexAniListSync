@@ -39,9 +39,8 @@ public class MutationRetryDrainServiceTests
     {
         public Mock<IWebhookService> Webhook { get; } = new();
         public Mock<IAniListService> AniList { get; } = new();
-        public IMutationRetryQueue Queue { get; } = new FusionCacheMutationRetryQueue(
-            new FusionCache(Options.Create(new FusionCacheOptions()))
-        );
+        public IMutationRetryQueue Queue { get; } =
+            new FusionCacheMutationRetryQueue(new FusionCache(Options.Create(new FusionCacheOptions())));
         public RateLimitGate Gate { get; } = new();
 
         public MutationRetryDrainService Build(RetryQueueOptions? options = null)
@@ -91,8 +90,9 @@ public class MutationRetryDrainServiceTests
     {
         var h = new Harness();
         h.ResolveToSameId(500);
-        h.AniList
-            .Setup(x => x.UpdateMediaAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<MediaType>()))
+        h.AniList.Setup(x =>
+                x.UpdateMediaAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<MediaType>())
+            )
             .ThrowsAsync(RateLimit());
         await h.Queue.EnqueueAsync(Webhook(5), DateTimeOffset.UtcNow.AddMinutes(-1), CancellationToken.None);
         var service = h.Build();
@@ -158,8 +158,7 @@ public class MutationRetryDrainServiceTests
     {
         // A Plex season split across two AniList ids (cour split) must produce two mutations, not one.
         var h = new Harness();
-        h.Webhook
-            .Setup(x => x.ResolveAsync(It.IsAny<WebhookData>()))
+        h.Webhook.Setup(x => x.ResolveAsync(It.IsAny<WebhookData>()))
             .ReturnsAsync((WebhookData d) => new ResolvedMutation(d.Episode <= 12 ? 100 : 200, d.Episode, d.Type));
         var enqueuedAt = DateTimeOffset.UtcNow.AddMinutes(-1);
         await h.Queue.EnqueueAsync(Webhook(12), enqueuedAt, CancellationToken.None);
