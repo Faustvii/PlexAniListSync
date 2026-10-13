@@ -21,24 +21,17 @@ public class AniListServiceNotificationTests
     private const string PlexUser = "plexuser";
     private const string Token = "anilist-token";
 
-    // AniListNet objects have private setters (built by the GraphQL parser), so tests
-    // fabricate them the same way the library does.
-    private static MediaEntry BuildEntry(int progress, int? episodes, string title)
-    {
-        var entry = Activator.CreateInstance(typeof(MediaEntry), nonPublic: true)!;
-        var media = Activator.CreateInstance(typeof(Media), nonPublic: true)!;
-        var mediaTitle = Activator.CreateInstance(typeof(MediaTitle), nonPublic: true)!;
-
-        typeof(MediaTitle).GetProperty(nameof(MediaTitle.PreferredTitle))!.SetValue(mediaTitle, title);
-        typeof(Media).GetProperty(nameof(Media.Title))!.SetValue(media, mediaTitle);
-        typeof(Media).GetProperty(nameof(Media.Episodes))!.SetValue(media, episodes);
-        typeof(MediaEntry).GetProperty(nameof(MediaEntry.Media))!.SetValue(entry, media);
-        typeof(MediaEntry).GetProperty(nameof(MediaEntry.Progress))!.SetValue(entry, progress);
-        typeof(MediaEntry)
-            .GetProperty(nameof(MediaEntry.StartDate))!
-            .SetValue(entry, Activator.CreateInstance(typeof(Date), nonPublic: true)!);
-        return (MediaEntry)entry;
-    }
+    private static MediaEntry BuildEntry(int progress, int? episodes, string title) =>
+        new()
+        {
+            Progress = progress,
+            StartDate = new Date(),
+            Media = new Media
+            {
+                Episodes = episodes,
+                Title = new MediaTitle { PreferredTitle = title },
+            },
+        };
 
     private static (AniListService Service, Mock<IAniClient> Client, Mock<INotificationService> Notifications) Build(
         AniListOptions.AniListUser user,
