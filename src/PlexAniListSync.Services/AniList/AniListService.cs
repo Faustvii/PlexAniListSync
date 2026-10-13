@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PlexAniListSync.Models.AniList;
 using PlexAniListSync.Models.Cache;
+using PlexAniListSync.Services.Notifications;
 using ZiggyCreatures.Caching.Fusion;
 using static PlexAniListSync.Models.AniList.AniListOptions;
 using MediaType = PlexAniListSync.AniListNet.Objects.MediaType;
@@ -19,6 +20,7 @@ public class AniListService : IAniListService
     private readonly IOptions<AniListOptions> _options;
     private readonly ILogger<AniListService> _logger;
     private readonly IFusionCache _cache;
+    private readonly INotificationService _notifications;
     private readonly CacheOptions _cacheOptions;
     private TimeSpan LookupTtl => TimeSpan.FromHours(_cacheOptions.LookupTtlHours);
     private TimeSpan NotFoundTtl => TimeSpan.FromHours(_cacheOptions.NotFoundTtlHours);
@@ -29,7 +31,8 @@ public class AniListService : IAniListService
         ILogger<AniListService> logger,
         IAniClient client,
         IFusionCache cache,
-        IOptions<CacheOptions> cacheOptions
+        IOptions<CacheOptions> cacheOptions,
+        INotificationService notifications
     )
     {
         _options = options;
@@ -37,6 +40,7 @@ public class AniListService : IAniListService
         _client = client;
         _cache = cache;
         _cacheOptions = cacheOptions.Value;
+        _notifications = notifications;
     }
 
     public ValueTask<int?> FindShowAsync(string title, int season)
@@ -198,7 +202,7 @@ public class AniListService : IAniListService
             _ => title
         };
 
-        var filter = new PlexAniListSync.AniListNet.Parameters.SearchMediaFilter
+        var filter = new AniListNet.Parameters.SearchMediaFilter
         {
             Type = MediaType.Anime,
             Format = new Dictionary<MediaFormat, bool>
@@ -242,7 +246,7 @@ public class AniListService : IAniListService
             _ => MediaFormat.Movie
         };
 
-        var filter = new PlexAniListSync.AniListNet.Parameters.SearchMediaFilter
+        var filter = new AniListNet.Parameters.SearchMediaFilter
         {
             Type = MediaType.Anime,
             Format = new Dictionary<MediaFormat, bool> { { format, true } },
@@ -302,6 +306,11 @@ public class AniListService : IAniListService
         if (authenticated is false)
         {
             _logger.LogUnableToAuthenticateAnilist(anilistId, episode);
+            _notifications.NotifyUserError(
+                user,
+                $"auth:{MediaEntryCacheKey(user.Token, 0)}",
+                "Failed to update AniList progress - authentication failed (token expired?)"
+            );
             return;
         }
 
@@ -342,7 +351,7 @@ public class AniListService : IAniListService
             }
         }
 
-        var mutation = new PlexAniListSync.AniListNet.Parameters.MediaEntryMutation()
+        var mutation = new AniListNet.Parameters.MediaEntryMutation()
         {
             Progress = episode,
             Status = status,
@@ -364,6 +373,9 @@ public class AniListService : IAniListService
             // Write-through: keep the cached progress fresh so a binge's next episode
             // reads from cache instead of hitting AniList again.
             await _cache.SetAsync(entryCacheKey, CachedMediaEntry.From(saved), options => options.SetDuration(MediaEntryTtl));
+            // We only get here when the progress actually advanced (the rewatch guard
+            // above returns early), so this is a genuine "watched something" moment.
+            _notifications.NotifyWatched(user, anilistId, episode, saved.Media?.Title?.PreferredTitle, mediaType);
         }
     }
 

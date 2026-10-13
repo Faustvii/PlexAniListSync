@@ -1,11 +1,13 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NeoSmart.Caching.Sqlite;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 using PlexAniListSync.Models.AniList;
 using PlexAniListSync.Models.Cache;
 using PlexAniListSync.Models.Mappings;
+using PlexAniListSync.Models.Notifications;
 using PlexAniListSync.Models.Plex;
 using PlexAniListSync.Models.RetryQueue;
 using PlexAniListSync.Services.AniList;
@@ -14,6 +16,7 @@ using PlexAniListSync.Services.Downloaders;
 using PlexAniListSync.Services.Extractors;
 using PlexAniListSync.Services.HostedServices;
 using PlexAniListSync.Services.Mappings;
+using PlexAniListSync.Services.Notifications;
 using PlexAniListSync.Services.Parsers;
 using PlexAniListSync.Services.RetryQueue;
 using PlexAniListSync.Services.Webhook;
@@ -44,6 +47,28 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddWebhooks(this IServiceCollection services)
     {
         services.AddTransient<IWebhookService, WebhookService>();
+        return services;
+    }
+
+    public static IServiceCollection AddNotifications(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<NotificationOptions>(configuration.GetSection(NotificationOptions.Key));
+        var options = configuration.GetSection(NotificationOptions.Key).Get<NotificationOptions>() ?? new NotificationOptions();
+
+        services.AddSingleton<NotificationQueue>();
+
+        if (options.Enabled)
+        {
+            services.AddHttpClient(NotificationWorker.HttpClientName);
+            services.AddSingleton<INotificationService, NtfyNotificationService>();
+            services.AddHostedService<NotificationWorker>();
+            services.AddSingleton<ILoggerProvider, ErrorNotificationLoggerProvider>();
+        }
+        else
+        {
+            services.AddSingleton<INotificationService, NoOpNotificationService>();
+        }
+
         return services;
     }
 

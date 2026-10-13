@@ -1,3 +1,5 @@
+using PlexAniListSync.Models.Notifications;
+
 namespace PlexAniListSync.Models.AniList;
 
 public class AniListOptions
@@ -10,5 +12,7 @@ public class AniListOptions
     {
         public string Token { get; set; } = string.Empty;
         public string[] PlexUsernames { get; set; } = Array.Empty<string>();
+
+        public NotificationTarget? Notifications { get; set; }
     }
 }

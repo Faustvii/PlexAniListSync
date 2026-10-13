@@ -24,6 +24,7 @@ builder.Services.AddOptions();
 builder.Services.AddPlex(builder.Configuration);
 builder.Services.AddAnilist(builder.Configuration);
 builder.Services.AddWebhooks();
+builder.Services.AddNotifications(builder.Configuration);
 builder.Services.AddRetryQueue(builder.Configuration);
 builder.Services.AddExtractor();
 builder.Services.AddHttpClients();
