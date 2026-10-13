@@ -1,3 +1,10 @@
+# [3.8.0](https://github.com/Faustvii/PlexAniListSync/compare/v3.7.1...v3.8.0) (2026-10-13)
+
+
+### Features
+
+* **notifications:** send ntfy events for synced episodes and errors ([e4f4e9b](https://github.com/Faustvii/PlexAniListSync/commit/e4f4e9b211c5c70d1ef52a2f86b0eaa72ac61abf))
+
 ## [3.7.1](https://github.com/Faustvii/PlexAniListSync/compare/v3.7.0...v3.7.1) (2026-09-12)
 
 
