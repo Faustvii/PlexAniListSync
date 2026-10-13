@@ -6,6 +6,7 @@ using PlexAniListSync.Models.AniList;
 using PlexAniListSync.Models.Cache;
 using PlexAniListSync.Models.Webhook;
 using PlexAniListSync.Services.AniList;
+using PlexAniListSync.Services.Notifications;
 using Xunit;
 using ZiggyCreatures.Caching.Fusion;
 
@@ -34,7 +35,8 @@ public class AniListServiceCachingTests
             Mock.Of<ILogger<AniListService>>(),
             client,
             cache,
-            Options.Create(new CacheOptions())
+            Options.Create(new CacheOptions()),
+            Mock.Of<INotificationService>()
         );
     }
 

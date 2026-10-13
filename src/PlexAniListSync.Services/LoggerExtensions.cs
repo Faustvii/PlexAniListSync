@@ -28,6 +28,7 @@ internal static class LoggerExtensions
     private static readonly Action<ILogger, int, int, int, Exception?> LogRetryQueueEntryDrainedAction;
     private static readonly Action<ILogger, int, Exception?> LogDrainRateLimitedOnUpdateAction;
     private static readonly Action<ILogger, int, Exception?> LogDrainRateLimitedOnResolveAction;
+    private static readonly Action<ILogger, string, Exception?> LogNotificationDeliveryErrorAction;
 
 #pragma warning disable MA0051 // I'm okay with this being long
     static LoggerExtensions()
@@ -164,6 +165,12 @@ internal static class LoggerExtensions
             eventId: 23,
             formatString: "AniList rate-limited resolving episode {Episode} during drain - pausing and rescheduling with backoff"
         );
+
+        LogNotificationDeliveryErrorAction = LoggerMessage.Define<string>(
+            logLevel: LogLevel.Warning,
+            eventId: 24,
+            formatString: "Failed to deliver notification - {Reason}"
+        );
     }
 
     public static void LogUnexpectedAmoutOfShows(this ILogger logger, int showCount)
@@ -292,6 +299,11 @@ internal static class LoggerExtensions
     public static void LogDrainRateLimitedOnResolve(this ILogger logger, int episode)
     {
         LogDrainRateLimitedOnResolveAction(logger, episode, null);
+    }
+
+    public static void LogNotificationDeliveryError(this ILogger logger, string reason)
+    {
+        LogNotificationDeliveryErrorAction(logger, reason, null);
     }
 }
 #pragma warning restore MA0003

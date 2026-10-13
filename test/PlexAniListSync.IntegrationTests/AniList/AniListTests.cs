@@ -32,7 +32,7 @@ public class AniListTests
         var client = new AniClientWrapper(new PlexAniListSync.AniListNet.AniClient(), Mock.Of<ILogger<AniClientWrapper>>());
         var cache = new FusionCache(Options.Create(new FusionCacheOptions()));
         var cacheOptions = Options.Create(new CacheOptions());
-        var service = new AniListService(options, logger, client, cache, cacheOptions);
+        var service = new AniListService(options, logger, client, cache, cacheOptions, Mock.Of<PlexAniListSync.Services.Notifications.INotificationService>());
 
         var anilistId = await service.FindShowAsync(title, season);
 
@@ -58,7 +58,7 @@ public class AniListTests
         var client = new AniClientWrapper(new PlexAniListSync.AniListNet.AniClient(), Mock.Of<ILogger<AniClientWrapper>>());
         var cache = new FusionCache(Options.Create(new FusionCacheOptions()));
         var cacheOptions = Options.Create(new CacheOptions());
-        var service = new AniListService(options, logger, client, cache, cacheOptions);
+        var service = new AniListService(options, logger, client, cache, cacheOptions, Mock.Of<PlexAniListSync.Services.Notifications.INotificationService>());
 
         var anilistId = await service.FindMovieAsync(title);
 
