@@ -33,9 +33,7 @@ internal sealed class NotificationWorker : BackgroundService
             await foreach (var notification in _queue.ReadAllAsync(stoppingToken))
                 await PublishAsync(notification, stoppingToken);
         }
-        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
-        {
-        }
+        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { }
     }
 
     internal async Task PublishAsync(QueuedNotification notification, CancellationToken cancellationToken)
@@ -58,9 +56,7 @@ internal sealed class NotificationWorker : BackgroundService
 
         try
         {
-            using var response = await _httpClientFactory
-                .CreateClient(HttpClientName)
-                .SendAsync(request, linked.Token);
+            using var response = await _httpClientFactory.CreateClient(HttpClientName).SendAsync(request, linked.Token);
             if (!response.IsSuccessStatusCode)
                 _logger.LogNotificationDeliveryError($"status code {(int)response.StatusCode}");
         }

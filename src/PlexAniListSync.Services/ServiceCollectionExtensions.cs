@@ -1,9 +1,9 @@
+using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NeoSmart.Caching.Sqlite;
-using ZiggyCreatures.Caching.Fusion;
-using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
+using PlexAniListSync.AniListNet;
 using PlexAniListSync.Models.AniList;
 using PlexAniListSync.Models.Cache;
 using PlexAniListSync.Models.Mappings;
@@ -20,8 +20,8 @@ using PlexAniListSync.Services.Notifications;
 using PlexAniListSync.Services.Parsers;
 using PlexAniListSync.Services.RetryQueue;
 using PlexAniListSync.Services.Webhook;
-using PlexAniListSync.AniListNet;
-using System.Text.Json;
+using ZiggyCreatures.Caching.Fusion;
+using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 
 namespace PlexAniListSync.Services;
 
@@ -53,7 +53,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddNotifications(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<NotificationOptions>(configuration.GetSection(NotificationOptions.Key));
-        var options = configuration.GetSection(NotificationOptions.Key).Get<NotificationOptions>() ?? new NotificationOptions();
+        var options =
+            configuration.GetSection(NotificationOptions.Key).Get<NotificationOptions>() ?? new NotificationOptions();
 
         services.AddSingleton<NotificationQueue>();
 
@@ -74,7 +75,8 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddRetryQueue(this IServiceCollection services, IConfiguration configuration)
     {
-        var options = configuration.GetSection(RetryQueueOptions.Key).Get<RetryQueueOptions>() ?? new RetryQueueOptions();
+        var options =
+            configuration.GetSection(RetryQueueOptions.Key).Get<RetryQueueOptions>() ?? new RetryQueueOptions();
         services.Configure<RetryQueueOptions>(configuration.GetSection(RetryQueueOptions.Key));
 
         services.AddSingleton<IRateLimitGate, RateLimitGate>();

@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -33,5 +32,4 @@
     <ProjectReference Include="..\PlexAniListSync.Services\PlexAniListSync.Services.csproj" />
     <ProjectReference Include="..\PlexAniListSync.AniListNet\PlexAniListSync.AniListNet.csproj" />
   </ItemGroup>
-
 </Project>

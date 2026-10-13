@@ -18,7 +18,10 @@ public class NotificationWorkerTests
         public List<HttpRequestMessage> Requests { get; } = new();
         public List<string?> Bodies { get; } = new();
 
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected override async Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken
+        )
         {
             Requests.Add(request);
             Bodies.Add(request.Content is null ? null : await request.Content.ReadAsStringAsync(cancellationToken));
@@ -30,11 +33,7 @@ public class NotificationWorkerTests
     {
         var factory = new Mock<IHttpClientFactory>();
         factory.Setup(x => x.CreateClient(NotificationWorker.HttpClientName)).Returns(() => new HttpClient(handler));
-        return new NotificationWorker(
-            new NotificationQueue(),
-            factory.Object,
-            NullLogger<NotificationWorker>.Instance
-        );
+        return new NotificationWorker(new NotificationQueue(), factory.Object, NullLogger<NotificationWorker>.Instance);
     }
 
     private static QueuedNotification Notification(NotificationTarget? target = null) =>

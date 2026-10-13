@@ -1,10 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
-using PlexAniListSync.AniListNet;
-using PlexAniListSync.AniListNet.Objects;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using PlexAniListSync.AniListNet;
+using PlexAniListSync.AniListNet.Objects;
 using PlexAniListSync.Models.AniList;
 using PlexAniListSync.Models.Cache;
 using PlexAniListSync.Services.Notifications;
@@ -161,14 +161,11 @@ public class AniListService : IAniListService
                 1 => $"{number}st",
                 2 => $"{number}nd",
                 3 => $"{number}rd",
-                _ => $"{number}th"
-            }
+                _ => $"{number}th",
+            },
         };
 
-    private static readonly string[] RomanNumerals =
-    {
-        "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"
-    };
+    private static readonly string[] RomanNumerals = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X" };
 
     private static string ToRomanNumeral(int number) =>
         number >= 1 && number <= RomanNumerals.Length ? RomanNumerals[number - 1] : number.ToStringInvariantCulture();
@@ -199,7 +196,7 @@ public class AniListService : IAniListService
             1 => title,
             2 => $"{title} season {season.ToStringInvariantCulture()}",
             3 => $"{title} {season.ToStringInvariantCulture()}",
-            _ => title
+            _ => title,
         };
 
         var filter = new AniListNet.Parameters.SearchMediaFilter
@@ -212,7 +209,7 @@ public class AniListService : IAniListService
                 { MediaFormat.Special, true },
                 { MediaFormat.ONA, true },
             },
-            Status = new Dictionary<MediaStatus, bool> { { MediaStatus.NotYetReleased, false }, },
+            Status = new Dictionary<MediaStatus, bool> { { MediaStatus.NotYetReleased, false } },
             Query = query,
         };
 
@@ -243,14 +240,14 @@ public class AniListService : IAniListService
         {
             1 => MediaFormat.Movie,
             2 => MediaFormat.Special,
-            _ => MediaFormat.Movie
+            _ => MediaFormat.Movie,
         };
 
         var filter = new AniListNet.Parameters.SearchMediaFilter
         {
             Type = MediaType.Anime,
             Format = new Dictionary<MediaFormat, bool> { { format, true } },
-            Status = new Dictionary<MediaStatus, bool> { { MediaStatus.NotYetReleased, false }, },
+            Status = new Dictionary<MediaStatus, bool> { { MediaStatus.NotYetReleased, false } },
             Query = query,
         };
 
@@ -280,8 +277,8 @@ public class AniListService : IAniListService
         Models.Webhook.MediaType mediaType
     )
     {
-        var users = _options.Value.Users.Where(
-            x => x.PlexUsernames.Any(t => t.Equals(plexUsername, StringComparison.OrdinalIgnoreCase))
+        var users = _options.Value.Users.Where(x =>
+            x.PlexUsernames.Any(t => t.Equals(plexUsername, StringComparison.OrdinalIgnoreCase))
         );
         if (!users.Any())
         {
@@ -372,7 +369,11 @@ public class AniListService : IAniListService
             var saved = await _client.SaveMediaEntryAsync(anilistId, mutation);
             // Write-through: keep the cached progress fresh so a binge's next episode
             // reads from cache instead of hitting AniList again.
-            await _cache.SetAsync(entryCacheKey, CachedMediaEntry.From(saved), options => options.SetDuration(MediaEntryTtl));
+            await _cache.SetAsync(
+                entryCacheKey,
+                CachedMediaEntry.From(saved),
+                options => options.SetDuration(MediaEntryTtl)
+            );
             // We only get here when the progress actually advanced (the rewatch guard
             // above returns early), so this is a genuine "watched something" moment.
             _notifications.NotifyWatched(user, anilistId, episode, saved.Media?.Title?.PreferredTitle, mediaType);

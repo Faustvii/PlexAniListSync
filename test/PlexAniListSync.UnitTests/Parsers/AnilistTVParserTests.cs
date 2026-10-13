@@ -42,10 +42,10 @@ public static class AnilistTVParserTestData
                     {
                         Number = 1,
                         AnilistId = 131586,
-                        Start = 12
-                    }
-                }
-            }
+                        Start = 12,
+                    },
+                },
+            },
         },
         @"# PlexAniSync: TheTVDB Series Mappings in English
 entries:
@@ -59,6 +59,6 @@ entries:
         anilist-id: 116589
       - season: 1
         anilist-id: 131586
-        start: 12"
+        start: 12",
     };
 }

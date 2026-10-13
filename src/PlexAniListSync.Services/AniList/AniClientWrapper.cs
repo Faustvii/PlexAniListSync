@@ -1,7 +1,7 @@
+using Microsoft.Extensions.Logging;
 using PlexAniListSync.AniListNet;
 using PlexAniListSync.AniListNet.Objects;
 using PlexAniListSync.AniListNet.Parameters;
-using Microsoft.Extensions.Logging;
 
 namespace PlexAniListSync.Services.AniList;
 

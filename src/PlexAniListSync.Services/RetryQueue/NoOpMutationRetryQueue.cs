@@ -15,11 +15,17 @@ public sealed class NoOpMutationRetryQueue : IMutationRetryQueue
         return Task.FromResult(false);
     }
 
-    public Task<IReadOnlyList<QueuedMutation>> DequeueDueAsync(DateTimeOffset now, int limit, CancellationToken cancellationToken) =>
-        Task.FromResult<IReadOnlyList<QueuedMutation>>(Array.Empty<QueuedMutation>());
+    public Task<IReadOnlyList<QueuedMutation>> DequeueDueAsync(
+        DateTimeOffset now,
+        int limit,
+        CancellationToken cancellationToken
+    ) => Task.FromResult<IReadOnlyList<QueuedMutation>>(Array.Empty<QueuedMutation>());
 
     public Task RemoveAsync(QueuedMutation entry, CancellationToken cancellationToken) => Task.CompletedTask;
 
-    public Task RescheduleAsync(QueuedMutation entry, DateTimeOffset nextAttemptAt, CancellationToken cancellationToken) =>
-        Task.CompletedTask;
+    public Task RescheduleAsync(
+        QueuedMutation entry,
+        DateTimeOffset nextAttemptAt,
+        CancellationToken cancellationToken
+    ) => Task.CompletedTask;
 }

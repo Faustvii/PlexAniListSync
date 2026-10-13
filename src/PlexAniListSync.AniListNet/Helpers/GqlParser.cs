@@ -28,18 +28,21 @@ internal static class GqlParser
             var selectionAttribute = variable.GetCustomAttribute<GqlSelectionAttribute>();
             if (selectionAttribute is null)
                 continue;
-            var subSelections = ParseToSelections(variable.MemberType switch
-            {
-                MemberTypes.Field => ((FieldInfo)variable).FieldType,
-                MemberTypes.Property => ((PropertyInfo)variable).PropertyType,
-                _ => throw new NotSupportedException($"Unsupported member type {variable.MemberType}")
-            });
-            var parameters = variable.GetCustomAttributes<GqlParameterAttribute>()
+            var subSelections = ParseToSelections(
+                variable.MemberType switch
+                {
+                    MemberTypes.Field => ((FieldInfo)variable).FieldType,
+                    MemberTypes.Property => ((PropertyInfo)variable).PropertyType,
+                    _ => throw new NotSupportedException($"Unsupported member type {variable.MemberType}"),
+                }
+            );
+            var parameters = variable
+                .GetCustomAttributes<GqlParameterAttribute>()
                 .Select(attribute => new GqlParameter(attribute));
             var selection = new GqlSelection(selectionAttribute)
             {
                 Parameters = parameters.ToList(),
-                Selections = subSelections
+                Selections = subSelections,
             };
             if (!string.IsNullOrEmpty(selectionAttribute.Alias))
                 selection.Alias = selectionAttribute.Alias;
@@ -90,8 +93,12 @@ internal static class GqlParser
     {
         var stringBuilder = new StringBuilder();
         foreach (var parameter in parameters)
-            stringBuilder.Append((stringBuilder.Length > 1 ? "," : string.Empty) + parameter.Name + ":" +
-                                 ParseObjectString(parameter.Value));
+            stringBuilder.Append(
+                (stringBuilder.Length > 1 ? "," : string.Empty)
+                    + parameter.Name
+                    + ":"
+                    + ParseObjectString(parameter.Value)
+            );
         return stringBuilder.ToString();
     }
 
@@ -100,43 +107,55 @@ internal static class GqlParser
         return value switch
         {
             null => "null",
-            string @string => ((Func<string>)(() =>
-            {
-                if (@string.Contains('\n'))
-                    return $"\"\"\"{@string}\"\"\"";
-                return @string.StartsWith('$') ? @string.TrimStart('$') : $"\"{@string}\"";
-            }))(),
+            string @string => (
+                (Func<string>)(
+                    () =>
+                    {
+                        if (@string.Contains('\n'))
+                            return $"\"\"\"{@string}\"\"\"";
+                        return @string.StartsWith('$') ? @string.TrimStart('$') : $"\"{@string}\"";
+                    }
+                )
+            )(),
             bool @bool => @bool ? "true" : "false",
             Enum @enum => HelperUtilities.GetEnumMemberValue(@enum),
-            IEnumerable<GqlParameter> parameters => ((Func<string>)(() =>
-            {
-                var stringBuilder = new StringBuilder();
-                stringBuilder.Append('{');
-                foreach (var parameter in parameters)
-                {
-                    stringBuilder.Append(stringBuilder.Length > 1 ? "," : string.Empty);
-                    stringBuilder.Append(parameter.Name);
-                    stringBuilder.Append(':');
-                    stringBuilder.Append(ParseObjectString(parameter.Value));
-                }
+            IEnumerable<GqlParameter> parameters => (
+                (Func<string>)(
+                    () =>
+                    {
+                        var stringBuilder = new StringBuilder();
+                        stringBuilder.Append('{');
+                        foreach (var parameter in parameters)
+                        {
+                            stringBuilder.Append(stringBuilder.Length > 1 ? "," : string.Empty);
+                            stringBuilder.Append(parameter.Name);
+                            stringBuilder.Append(':');
+                            stringBuilder.Append(ParseObjectString(parameter.Value));
+                        }
 
-                stringBuilder.Append('}');
-                return stringBuilder.ToString();
-            }))(),
-            IEnumerable enumerable => ((Func<string>)(() =>
-            {
-                var stringBuilder = new StringBuilder();
-                stringBuilder.Append('[');
-                foreach (var item in enumerable)
-                {
-                    stringBuilder.Append(stringBuilder.Length > 1 ? "," : string.Empty);
-                    stringBuilder.Append(ParseObjectString(item));
-                }
+                        stringBuilder.Append('}');
+                        return stringBuilder.ToString();
+                    }
+                )
+            )(),
+            IEnumerable enumerable => (
+                (Func<string>)(
+                    () =>
+                    {
+                        var stringBuilder = new StringBuilder();
+                        stringBuilder.Append('[');
+                        foreach (var item in enumerable)
+                        {
+                            stringBuilder.Append(stringBuilder.Length > 1 ? "," : string.Empty);
+                            stringBuilder.Append(ParseObjectString(item));
+                        }
 
-                stringBuilder.Append(']');
-                return stringBuilder.ToString();
-            }))(),
-            _ => value.ToString() ?? "null"
+                        stringBuilder.Append(']');
+                        return stringBuilder.ToString();
+                    }
+                )
+            )(),
+            _ => value.ToString() ?? "null",
         };
     }
 }

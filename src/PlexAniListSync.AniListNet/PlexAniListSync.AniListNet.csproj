@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -18,5 +17,4 @@
     System.Text.Json and reduced to only the operations this app uses. See NOTICE for credits.
     Uses the in-box System.Text.Json - no package references.
   -->
-
 </Project>

@@ -6,8 +6,10 @@ namespace PlexAniListSync.AniListNet;
 
 public partial class AniClient
 {
-    public async Task<AniPagination<Media>> SearchMediaAsync(SearchMediaFilter filter,
-        AniPaginationOptions? options = null)
+    public async Task<AniPagination<Media>> SearchMediaAsync(
+        SearchMediaFilter filter,
+        AniPaginationOptions? options = null
+    )
     {
         options ??= new AniPaginationOptions();
         var selections = new GqlSelection("Page")
@@ -16,8 +18,8 @@ public partial class AniClient
             Selections = new GqlSelection[]
             {
                 new("pageInfo", GqlParser.ParseToSelections<PageInfo>()),
-                new("media", GqlParser.ParseToSelections<Media>(), filter.ToParameters())
-            }
+                new("media", GqlParser.ParseToSelections<Media>(), filter.ToParameters()),
+            },
         };
         var response = await PostRequestAsync(selections);
         var page = response["Page"]!;

@@ -50,7 +50,9 @@ public class AniListServiceNotificationTests
         client.Setup(x => x.TryAuthenticateAsync(Token)).ReturnsAsync(true);
         client.Setup(x => x.GetMediaEntryAsync(It.IsAny<int>())).ReturnsAsync(cachedEntry);
         if (savedEntry is not null)
-            client.Setup(x => x.SaveMediaEntryAsync(It.IsAny<int>(), It.IsAny<MediaEntryMutation>())).ReturnsAsync(savedEntry);
+            client
+                .Setup(x => x.SaveMediaEntryAsync(It.IsAny<int>(), It.IsAny<MediaEntryMutation>()))
+                .ReturnsAsync(savedEntry);
 
         var notifications = new Mock<INotificationService>();
         var cache = new FusionCache(Options.Create(new FusionCacheOptions()));
@@ -74,15 +76,12 @@ public class AniListServiceNotificationTests
             PlexUsernames = new[] { PlexUser },
             Notifications = new NotificationTarget { TopicUrl = "https://ntfy.local/me" },
         };
-        // no existing entry: first episode watched
+
         var (service, _, notifications) = Build(user, cachedEntry: null, savedEntry: BuildEntry(7, 24, "Cowboy Bebop"));
 
         await service.UpdateMediaAsync(PlexUser, anilistId: 1, episode: 7, MediaType.Episode);
 
-        notifications.Verify(
-            x => x.NotifyWatched(user, 1, 7, "Cowboy Bebop", MediaType.Episode),
-            Times.Once
-        );
+        notifications.Verify(x => x.NotifyWatched(user, 1, 7, "Cowboy Bebop", MediaType.Episode), Times.Once);
     }
 
     [Fact]
@@ -98,10 +97,7 @@ public class AniListServiceNotificationTests
 
         await service.UpdateMediaAsync(PlexUser, anilistId: 1, episode: 1, MediaType.Movie);
 
-        notifications.Verify(
-            x => x.NotifyWatched(user, 1, 1, "Your Name.", MediaType.Movie),
-            Times.Once
-        );
+        notifications.Verify(x => x.NotifyWatched(user, 1, 1, "Your Name.", MediaType.Movie), Times.Once);
     }
 
     [Fact]
@@ -114,14 +110,21 @@ public class AniListServiceNotificationTests
             Notifications = new NotificationTarget { TopicUrl = "https://ntfy.local/me" },
         };
 
-        var (service, client, notifications) = Build(
-            user,
-            cachedEntry: BuildEntry(7, 24, "Cowboy Bebop")
-        );
+        var (service, client, notifications) = Build(user, cachedEntry: BuildEntry(7, 24, "Cowboy Bebop"));
 
         await service.UpdateMediaAsync(PlexUser, anilistId: 1, episode: 7, MediaType.Episode);
 
-        notifications.Verify(x => x.NotifyWatched(It.IsAny<AniListOptions.AniListUser>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<MediaType>()), Times.Never);
+        notifications.Verify(
+            x =>
+                x.NotifyWatched(
+                    It.IsAny<AniListOptions.AniListUser>(),
+                    It.IsAny<int>(),
+                    It.IsAny<int>(),
+                    It.IsAny<string?>(),
+                    It.IsAny<MediaType>()
+                ),
+            Times.Never
+        );
         client.Verify(x => x.SaveMediaEntryAsync(It.IsAny<int>(), It.IsAny<MediaEntryMutation>()), Times.Never);
     }
 
@@ -149,7 +152,17 @@ public class AniListServiceNotificationTests
 
         await service.UpdateMediaAsync(PlexUser, anilistId: 1, episode: 7, MediaType.Episode);
 
-        notifications.Verify(x => x.NotifyWatched(It.IsAny<AniListOptions.AniListUser>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<MediaType>()), Times.Never);
+        notifications.Verify(
+            x =>
+                x.NotifyWatched(
+                    It.IsAny<AniListOptions.AniListUser>(),
+                    It.IsAny<int>(),
+                    It.IsAny<int>(),
+                    It.IsAny<string?>(),
+                    It.IsAny<MediaType>()
+                ),
+            Times.Never
+        );
     }
 
     [Fact]
@@ -175,7 +188,25 @@ public class AniListServiceNotificationTests
 
         await service.UpdateMediaAsync(PlexUser, anilistId: 1, episode: 7, MediaType.Episode);
 
-        notifications.Verify(x => x.NotifyUserError(user, It.IsAny<string>(), It.Is<string>(m => m.Contains("token expired", StringComparison.OrdinalIgnoreCase))), Times.Once);
-        notifications.Verify(x => x.NotifyWatched(It.IsAny<AniListOptions.AniListUser>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<MediaType>()), Times.Never);
+        notifications.Verify(
+            x =>
+                x.NotifyUserError(
+                    user,
+                    It.IsAny<string>(),
+                    It.Is<string>(m => m.Contains("token expired", StringComparison.OrdinalIgnoreCase))
+                ),
+            Times.Once
+        );
+        notifications.Verify(
+            x =>
+                x.NotifyWatched(
+                    It.IsAny<AniListOptions.AniListUser>(),
+                    It.IsAny<int>(),
+                    It.IsAny<int>(),
+                    It.IsAny<string?>(),
+                    It.IsAny<MediaType>()
+                ),
+            Times.Never
+        );
     }
 }

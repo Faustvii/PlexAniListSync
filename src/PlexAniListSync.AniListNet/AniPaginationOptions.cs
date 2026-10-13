@@ -15,10 +15,6 @@ public class AniPaginationOptions
 
     internal IList<GqlParameter> ToParameters()
     {
-        return new GqlParameter[]
-        {
-            new("page", PageIndex),
-            new("perPage", PageSize)
-        };
+        return new GqlParameter[] { new("page", PageIndex), new("perPage", PageSize) };
     }
 }

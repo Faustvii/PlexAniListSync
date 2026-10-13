@@ -14,29 +14,23 @@ public class AnilistTVParser : IAnilistTVParser
     public IReadOnlyList<Models.Mappings.AnilistMapping> ParseMappings(string anilistTVMappingContent)
     {
         var parsed = _deserializer.Deserialize<AniListMappings>(anilistTVMappingContent);
-        return parsed.Entries
-            .Select(
-                x =>
-                    new Models.Mappings.AnilistMapping
+        return parsed
+            .Entries.Select(x => new Models.Mappings.AnilistMapping
+            {
+                Title = x.Title,
+                LookupIds = new[] { x.PlexGuid, x.Imdb, x.Tmdb, x.Tvdb }
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Select(x => x!)
+                    .ToArray(),
+                Seasons = x
+                    .Seasons.Select(s => new Models.Mappings.AnilistSeason
                     {
-                        Title = x.Title,
-                        LookupIds = new[] { x.PlexGuid, x.Imdb, x.Tmdb, x.Tvdb }
-                            .Where(x => !string.IsNullOrWhiteSpace(x))
-                            .Select(x => x!)
-                            .ToArray(),
-                        Seasons = x.Seasons
-                            .Select(
-                                s =>
-                                    new Models.Mappings.AnilistSeason
-                                    {
-                                        AnilistId = s.AnilistId,
-                                        Number = s.Number,
-                                        Start = s.Start
-                                    }
-                            )
-                            .ToArray()
-                    }
-            )
+                        AnilistId = s.AnilistId,
+                        Number = s.Number,
+                        Start = s.Start,
+                    })
+                    .ToArray(),
+            })
             .ToList();
     }
 

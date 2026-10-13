@@ -9,8 +9,8 @@ builder.Configuration.AddJsonFile("config/appsettings.json", optional: true, rel
 
 // Add services to the container.
 
-builder.Services
-    .AddControllers()
+builder
+    .Services.AddControllers()
     .AddJsonOptions(opt => opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

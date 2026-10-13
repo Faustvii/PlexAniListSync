@@ -76,10 +76,7 @@ public sealed class MutationRetryDrainService : IHostedService, IAsyncDisposable
 
             await ApplyGroupsAsync(groups, aniListService, now, cancellationToken);
         }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-
-        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
         catch (Exception ex)
         {
             _logger.LogUnexpectedHostedServiceError(nameof(MutationRetryDrainService), ex);
@@ -138,7 +135,12 @@ public sealed class MutationRetryDrainService : IHostedService, IAsyncDisposable
             }
             else
             {
-                groups[key] = new RetryGroup(entry.Data.User, resolved.AnilistId, resolved.AnilistEpisode, resolved.Type)
+                groups[key] = new RetryGroup(
+                    entry.Data.User,
+                    resolved.AnilistId,
+                    resolved.AnilistEpisode,
+                    resolved.Type
+                )
                 {
                     Entries = { entry },
                 };

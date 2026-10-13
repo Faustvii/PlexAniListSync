@@ -10,9 +10,7 @@ internal sealed class ErrorNotificationLoggerProvider : ILoggerProvider
 
     public ILogger CreateLogger(string categoryName) => new ErrorNotificationLogger(categoryName, _notifications);
 
-    public void Dispose()
-    {
-    }
+    public void Dispose() { }
 
     private sealed class ErrorNotificationLogger : ILogger
     {
@@ -60,9 +58,7 @@ internal sealed class ErrorNotificationLoggerProvider : ILoggerProvider
         {
             public static readonly NullScope Instance = new();
 
-            public void Dispose()
-            {
-            }
+            public void Dispose() { }
         }
     }
 }

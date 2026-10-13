@@ -40,8 +40,8 @@ public class AniClientTests
         response.Headers.TryAddWithoutValidation("Retry-After", "30");
         var client = ClientReturning(response);
 
-        var exception = await Assert.ThrowsAsync<AniListRateLimitException>(
-            () => client.SearchMediaAsync(new SearchMediaFilter { Query = "gleipnir" })
+        var exception = await Assert.ThrowsAsync<AniListRateLimitException>(() =>
+            client.SearchMediaAsync(new SearchMediaFilter { Query = "gleipnir" })
         );
 
         Assert.Equal(30, exception.RetryAfter);
@@ -58,7 +58,14 @@ public class AniClientTests
             {
                 Page = new
                 {
-                    pageInfo = new { total = 1, perPage = 20, currentPage = 1, lastPage = 1, hasNextPage = false },
+                    pageInfo = new
+                    {
+                        total = 1,
+                        perPage = 20,
+                        currentPage = 1,
+                        lastPage = 1,
+                        hasNextPage = false,
+                    },
                     media = new[]
                     {
                         new
@@ -70,13 +77,23 @@ public class AniClientTests
                                 romaji = "Gleipnir",
                                 english = "Gleipnir",
                                 native = "グレイプニル",
-                                userPreferred = "Gleipnir"
+                                userPreferred = "Gleipnir",
                             },
                             type = "ANIME",
                             format = "TV_SHORT",
                             status = "NOT_YET_RELEASED",
-                            startDate = new { year = 2020, month = 4, day = 5 },
-                            endDate = new { year = 2020, month = 6, day = 28 },
+                            startDate = new
+                            {
+                                year = 2020,
+                                month = 4,
+                                day = 5,
+                            },
+                            endDate = new
+                            {
+                                year = 2020,
+                                month = 6,
+                                day = 28,
+                            },
                             season = "SPRING",
                             seasonYear = 2020,
                             episodes = 13,
@@ -87,11 +104,11 @@ public class AniClientTests
                             synonyms = new[] { "格莱普尼尔" },
                             siteUrl = "https://anilist.co/anime/108241",
                             duration = 24,
-                            updatedAt = 1750277761
-                        }
-                    }
-                }
-            }
+                            updatedAt = 1750277761,
+                        },
+                    },
+                },
+            },
         };
         var response = new HttpResponseMessage(HttpStatusCode.OK)
         {
@@ -130,12 +147,27 @@ public class AniClientTests
                     score = 0.0,
                     progress = 7,
                     progressVolumes = (int?)null,
-                    startedAt = new { year = 2024, month = 1, day = 2 },
-                    completedAt = new { year = (int?)null, month = (int?)null, day = (int?)null },
-                    media = new { episodes = 13, chapters = (int?)null, volumes = (int?)null },
-                    notes = (string?)null
-                }
-            }
+                    startedAt = new
+                    {
+                        year = 2024,
+                        month = 1,
+                        day = 2,
+                    },
+                    completedAt = new
+                    {
+                        year = (int?)null,
+                        month = (int?)null,
+                        day = (int?)null,
+                    },
+                    media = new
+                    {
+                        episodes = 13,
+                        chapters = (int?)null,
+                        volumes = (int?)null,
+                    },
+                    notes = (string?)null,
+                },
+            },
         };
         var response = new HttpResponseMessage(HttpStatusCode.OK)
         {

@@ -1,16 +1,17 @@
 using System;
 using System.Linq;
-using PlexAniListSync.AniListNet;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Moq;
+using PlexAniListSync.AniListNet;
 using PlexAniListSync.Services.HostedServices;
 using ZiggyCreatures.Caching.Fusion;
 
-public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
+public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram>
+    where TProgram : class
 {
     private readonly Action<IServiceCollection> _configureServices;
 
@@ -37,9 +38,7 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
             services.RemoveAll<IFusionCache>();
             services.AddSingleton<IFusionCache>(new FusionCache(Options.Create(new FusionCacheOptions())));
 
-            var drainService = services.SingleOrDefault(
-                s => s.ImplementationType == typeof(MutationRetryDrainService)
-            );
+            var drainService = services.SingleOrDefault(s => s.ImplementationType == typeof(MutationRetryDrainService));
             if (drainService is not null)
                 services.Remove(drainService);
         });

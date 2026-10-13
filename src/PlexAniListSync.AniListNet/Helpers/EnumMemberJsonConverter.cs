@@ -16,7 +16,8 @@ internal sealed class EnumMemberJsonConverterFactory : JsonConverterFactory
     }
 }
 
-internal sealed class EnumMemberJsonConverter<TEnum> : JsonConverter<TEnum> where TEnum : struct, Enum
+internal sealed class EnumMemberJsonConverter<TEnum> : JsonConverter<TEnum>
+    where TEnum : struct, Enum
 {
     private readonly Dictionary<string, TEnum> _fromString = new(StringComparer.Ordinal);
     private readonly Dictionary<TEnum, string> _toString = new();

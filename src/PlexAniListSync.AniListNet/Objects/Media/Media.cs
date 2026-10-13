@@ -4,8 +4,11 @@ namespace PlexAniListSync.AniListNet.Objects;
 
 public class Media
 {
-    [GqlSelection("duration")] private readonly int? _duration;
-    [GqlSelection("updatedAt")] private readonly int _updatedAt;
+    [GqlSelection("duration")]
+    private readonly int? _duration;
+
+    [GqlSelection("updatedAt")]
+    private readonly int _updatedAt;
 
     /// <summary>
     /// The ID of the media.

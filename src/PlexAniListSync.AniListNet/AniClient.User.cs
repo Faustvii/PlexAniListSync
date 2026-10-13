@@ -8,10 +8,7 @@ public partial class AniClient
 {
     public async Task<User> GetAuthenticatedUserAsync()
     {
-        var selections = new GqlSelection("Viewer")
-        {
-            Selections = GqlParser.ParseToSelections<User>()
-        };
+        var selections = new GqlSelection("Viewer") { Selections = GqlParser.ParseToSelections<User>() };
         var response = await PostRequestAsync(selections);
         return GqlParser.ParseFromJson<User>(response["Viewer"])!;
     }
@@ -23,8 +20,10 @@ public partial class AniClient
     {
         var selections = new GqlSelection("SaveMediaListEntry")
         {
-            Parameters = new GqlParameter[] { new("mediaId", mediaId) }.Concat(mutation.ToParameters()).ToArray(),
-            Selections = GqlParser.ParseToSelections<MediaEntry>()
+            Parameters = new GqlParameter[] { new("mediaId", mediaId) }
+                .Concat(mutation.ToParameters())
+                .ToArray(),
+            Selections = GqlParser.ParseToSelections<MediaEntry>(),
         };
         var response = await PostRequestAsync(selections, true);
         return GqlParser.ParseFromJson<MediaEntry>(response["SaveMediaListEntry"])!;

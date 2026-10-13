@@ -23,9 +23,8 @@ public partial class AniClient(HttpClient client)
 
     public event EventHandler<AniRateEventArgs>? RateChanged;
 
-    public AniClient() : this(new HttpClient())
-    {
-    }
+    public AniClient()
+        : this(new HttpClient()) { }
 
     public void SetAuthenticationHeader(string token)
     {
@@ -58,8 +57,11 @@ public partial class AniClient(HttpClient client)
         return IsAuthenticated;
     }
 
-    private async Task<JsonNode> PostRequestAsync(GqlSelection selection, bool isMutation = false,
-        CancellationToken cancellationToken = default)
+    private async Task<JsonNode> PostRequestAsync(
+        GqlSelection selection,
+        bool isMutation = false,
+        CancellationToken cancellationToken = default
+    )
     {
         var query = (isMutation ? "mutation" : string.Empty) + selection;
         var requestPayload = JsonSerializer.Serialize(new { query });
@@ -74,12 +76,10 @@ public partial class AniClient(HttpClient client)
 
         if (rateLimit.HasValue && rateRemaining.HasValue)
         {
-            RateChanged?.Invoke(this, new AniRateEventArgs(
-                rateLimit.Value,
-                rateRemaining.Value,
-                retryAfter,
-                rateReset
-            ));
+            RateChanged?.Invoke(
+                this,
+                new AniRateEventArgs(rateLimit.Value, rateRemaining.Value, retryAfter, rateReset)
+            );
         }
 
         var responseText = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -91,29 +91,33 @@ public partial class AniClient(HttpClient client)
 
         if (!response.IsSuccessStatusCode)
         {
-            var message = TryGetGraphQlErrorMessage(responseJson)
-                          ?? $"AniList request failed with status {(int)response.StatusCode} "
-                             + $"({response.StatusCode}): {Truncate(responseText)}";
+            var message =
+                TryGetGraphQlErrorMessage(responseJson)
+                ?? $"AniList request failed with status {(int)response.StatusCode} "
+                    + $"({response.StatusCode}): {Truncate(responseText)}";
             throw new AniException(message, query, responseText, response.StatusCode);
         }
 
         if (responseJson is null)
             throw new AniException(
                 $"Expected a JSON response but received: {Truncate(responseText)}",
-                query, responseText, response.StatusCode);
+                query,
+                responseText,
+                response.StatusCode
+            );
 
         var graphQlError = TryGetGraphQlErrorMessage(responseJson);
         if (graphQlError is not null)
             throw new AniException(graphQlError, query, responseText, response.StatusCode);
 
         return responseJson["data"]
-               ?? throw new AniException("AniList response contained no data.", query, responseText,
-                   response.StatusCode);
+            ?? throw new AniException("AniList response contained no data.", query, responseText, response.StatusCode);
 
         int? GetHeaderInt(string headerName)
         {
-            return response.Headers.TryGetValues(headerName, out var values)
-                   && int.TryParse(values.FirstOrDefault(), out var val)
+            return
+                response.Headers.TryGetValues(headerName, out var values)
+                && int.TryParse(values.FirstOrDefault(), out var val)
                 ? val
                 : null;
         }

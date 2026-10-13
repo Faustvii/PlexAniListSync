@@ -17,12 +17,20 @@ public class NtfyNotificationServiceTests
         new() { TopicUrl = url, AccessToken = "tk_test" };
 
     private static AniListOptions.AniListUser User(NotificationTarget? notifications = null) =>
-        new() { Token = "token", PlexUsernames = new[] { "plexuser" }, Notifications = notifications };
+        new()
+        {
+            Token = "token",
+            PlexUsernames = new[] { "plexuser" },
+            Notifications = notifications,
+        };
 
     private static (NtfyNotificationService Service, NotificationQueue Queue) Build(NotificationOptions? options = null)
     {
         var queue = new NotificationQueue();
-        var service = new NtfyNotificationService(queue, new StaticOptionsMonitor(options ?? new NotificationOptions()));
+        var service = new NtfyNotificationService(
+            queue,
+            new StaticOptionsMonitor(options ?? new NotificationOptions())
+        );
         return (service, queue);
     }
 
@@ -35,16 +43,16 @@ public class NtfyNotificationServiceTests
             await foreach (var item in queue.ReadAllAsync(cts.Token))
                 items.Add(item);
         }
-        catch (OperationCanceledException)
-        {
-        }
+        catch (OperationCanceledException) { }
         return items;
     }
 
     private sealed class StaticOptionsMonitor(NotificationOptions options) : IOptionsMonitor<NotificationOptions>
     {
         public NotificationOptions CurrentValue => options;
+
         public NotificationOptions Get(string? name) => options;
+
         public IDisposable? OnChange(Action<NotificationOptions, string?> listener) => null;
     }
 
@@ -83,7 +91,13 @@ public class NtfyNotificationServiceTests
     {
         var (service, queue) = Build();
 
-        service.NotifyWatched(User(notifications: null), anilistId: 1, episode: 7, mediaTitle: "Cowboy Bebop", MediaType.Episode);
+        service.NotifyWatched(
+            User(notifications: null),
+            anilistId: 1,
+            episode: 7,
+            mediaTitle: "Cowboy Bebop",
+            MediaType.Episode
+        );
 
         Assert.Empty(await DrainAsync(queue));
     }
