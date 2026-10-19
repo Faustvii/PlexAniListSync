@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0.401-alpine3.24-amd64 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:11.0-alpine3.24-amd64 AS build-env
 WORKDIR /app
 EXPOSE 8080/tcp
 
