@@ -23,7 +23,7 @@ COPY ./src/ ./src
 RUN dotnet publish ./src/PlexAniListSync.API/ -c Release -o out
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:10.0.12-alpine3.24-amd64
+FROM mcr.microsoft.com/dotnet/aspnet:11.0-alpine3.24-amd64
 WORKDIR /app
 COPY --from=build-env /app/out .
 ENV DOTNET_EnableDiagnostics=0
